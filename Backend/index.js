@@ -4,7 +4,8 @@ const express = require('express');
 const app = express();
 
 
-const PORT = process.env.PORT || 3000;s
+const PORT = process.env.PORT || 3000;
+
 
 app.get('/', (req, res) => {
     res.send('Backend Server running on :',PORT);
