@@ -1,13 +1,21 @@
-
-const express = require('express');
-
+import express from 'express';
+import dotenv from 'dotenv'
 const app = express();
+dotenv.config()
+const PORT = process.env.PORT || 3000;
 
-
-const PORT = process.env.PORT || 3000;s
+app.get('/destinations', (req, res) => {
+    const destinations=[
+        "Manali",
+        "Bangalore",
+        "Kashmir",
+        "Goa"
+    ]
+    res.send(`Available destinations are ${destinations}`);
+});
 
 app.get('/', (req, res) => {
-    res.send('Backend Server running on :',PORT);
+    res.send(`we are on the port: ${PORT}`);
 });
 
 app.listen(PORT, () => {
