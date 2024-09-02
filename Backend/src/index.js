@@ -11,8 +11,11 @@ connectDB()
         console.log(`Server is running on ${process.env.PORT}`);
     })
 
-    app.get('/destinations',(req,res)=>{
-        try {
+    app.get("/", (req, res) => {
+        res.send("server is ready and working");
+      });
+
+    app.get('/api/destinations',(req,res)=>{
             const destinations=[
                 { id: 1, name: 'Taj Mahal', city: 'Agra' },
                 { id: 2, name: 'Golden Temple', city: 'Amritsar' },
@@ -20,11 +23,7 @@ connectDB()
                 { id: 4, name: 'Hawa Mahal', city: 'Jaipur' },
                 { id: 5, name: 'Meenakshi Amman Temple', city: 'Madurai' }
             ];       
-            res.json(destinations);
-        } catch (error) {
-            console.error(error);
-            res.status(500).send({message:"Error retrieving the destinations"});
-        }
+            res.send(destinations);
     })
 })
 .catch((error)=>{

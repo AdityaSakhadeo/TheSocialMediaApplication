@@ -5,7 +5,7 @@ function App() {
   const [destinations, setDestinations] = useState([]);
 
   useEffect(() => {
-    axios.get('/jokes')
+    axios.get('/api/destinations')
       .then((response:any) => {
         console.log("Response::",response)
         setDestinations(response.data);
@@ -17,8 +17,10 @@ function App() {
 
   return (
     <>
-      <h1>Hello World</h1>
       <h1>There are {destinations.length} destinations available</h1>
+      {
+        
+      }
     </>
   );
 }
