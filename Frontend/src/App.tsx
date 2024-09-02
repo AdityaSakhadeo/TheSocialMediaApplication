@@ -2,27 +2,34 @@ import { useEffect, useState } from "react";
 import "./App.css";
 import axios from 'axios';
 function App() {
-  const [destinations, setDestinations] = useState([]);
+  const [destinations, setDestinations] = useState<Destination[]>([]);
 
-  
-  useEffect(()=>{
-    axios.get('http://localhost:4000/destinations')
-    .then((response)=>{
-      setDestinations(response.data);
-    }
-    )
-    .catch((error)=>{
-      console.log(error);
-      })
+  interface Destination{
+    id:number,
+    name: string,
+    city:string;
+  }
+  useEffect(() => {
+    axios.get('/jokes')
+      .then((response:any) => {
+        console.log("Response::",response)
+        setDestinations(response.data);
+      }).catch((err:any) => {
+        console.log(err);
+      });
   },[])
 
 
   return (
     <>
-      <h1>Currently Available Destinations Are</h1>
-      {destinations.map((destination, index) => {
-        <div key={index}>{destination}</div>;
-      })}
+      <h1>There are {destinations.length} destinations available</h1>
+      {destinations.map((destination:Destination, index:number) => (
+          <div key={destination.id}>
+            <h2>{destination.name}</h2>
+            <p>City: {destination.city}</p>
+          </div>
+
+      ))}
     </>
   );
 }

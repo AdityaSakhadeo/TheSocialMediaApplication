@@ -14,11 +14,11 @@ connectDB()
     app.get('/destinations',(req,res)=>{
         try {
             const destinations=[
-                { id: 1, name: 'Taj Mahal', country: 'Agra' },
-                { id: 2, name: 'Golden Temple', country: 'Amritsar' },
-                { id: 3, name: 'Gateway of India', country: 'Mumbai' },
-                { id: 4, name: 'Hawa Mahal', country: 'Jaipur' },
-                { id: 5, name: 'Meenakshi Amman Temple', country: 'Madurai' }
+                { id: 1, name: 'Taj Mahal', city: 'Agra' },
+                { id: 2, name: 'Golden Temple', city: 'Amritsar' },
+                { id: 3, name: 'Gateway of India', city: 'Mumbai' },
+                { id: 4, name: 'Hawa Mahal', city: 'Jaipur' },
+                { id: 5, name: 'Meenakshi Amman Temple', city: 'Madurai' }
             ];       
             res.json(destinations);
         } catch (error) {
