@@ -13,17 +13,17 @@ connectDB()
 
     app.get('/destinations',(req,res)=>{
         try {
-            const destinations={
-                "Taj Mahal": "Agra",
-                "Golden Temple": "Amritsar",
-                "Gateway of India": "Mumbai",
-                "Hawa Mahal": "Jaipur",
-                "Meenakshi Amman Temple": "Madurai"
-            };       
+            const destinations=[
+                { id: 1, name: 'Taj Mahal', country: 'Agra' },
+                { id: 2, name: 'Golden Temple', country: 'Amritsar' },
+                { id: 3, name: 'Gateway of India', country: 'Mumbai' },
+                { id: 4, name: 'Hawa Mahal', country: 'Jaipur' },
+                { id: 5, name: 'Meenakshi Amman Temple', country: 'Madurai' }
+            ];       
             res.json(destinations);
         } catch (error) {
             console.error(error);
-            res.status.send({message:"Error retrieving the destinations"});
+            res.status(500).send({message:"Error retrieving the destinations"});
         }
     })
 })
