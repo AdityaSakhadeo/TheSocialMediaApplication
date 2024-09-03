@@ -7,9 +7,12 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const UserSchema = new Schema({
-    name: {
+    username: {
         type: String,
         required: true,
+        unique:true,
+        index:true,
+        lowercase:true
     },
     password: {
         type: String,
@@ -56,6 +59,12 @@ const UserSchema = new Schema({
         type: String,
         default: '',
     },
+    refreshToken:{
+        type:String
+    }
+},
+{
+    timestamps:true
 });
 
 userSchema.pre("save",async function(next){
@@ -69,11 +78,7 @@ userSchema.methods.isPasswordCorrect = async function(password)
 	return await bcrypt.compare(password,this.password);
     }    
 
-
-
-    
-
-module.exports = mongoose.model('User', UserSchema);
+module.exports = mongoose.model('users', UserSchema);
 
 
 
