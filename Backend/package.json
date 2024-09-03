@@ -14,9 +14,11 @@
   "description": "",
   "dependencies": {
     "backend": "file:",
+    "bcrypt": "^5.1.1",
     "cloudinary": "^2.4.0",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.6.0",
     "mongoose-aggregate-paginate-v2": "^1.1.2"
   },
