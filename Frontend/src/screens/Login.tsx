@@ -1,23 +1,35 @@
 import {useState} from 'react';
-import { TextField, Button, Checkbox, FormControlLabel, Typography, Container, Box, Divider, Link, Grid } from '@mui/material';
+import { TextField, Button, Checkbox, FormControlLabel, Typography, Container, Box, Divider, Link, colors } from '@mui/material';
 import { Google as GoogleIcon, Facebook as FacebookIcon, Twitter as TwitterIcon } from '@mui/icons-material';
+import loginImage from '../assets/login_image.jpeg'; 
+import {Link as RouterLink, useNavigate}  from 'react-router-dom';
 
 
 export default function Login() {
-    
+    let navigate = useNavigate()
+
     const [credentials , setCredentials] = useState({email: '', password: ''});
 
 
     const handleLogin = async (e) => {
         e.preventDefault();
-        const response = await fetch('/api/login', {
+        const response = await fetch('http://localhost:4000/api/v1/users/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({email: credentials.email, password: credentials.password})
         });
+        const result = await response.json();
+        console.log(result);
+        if(result.success){
+            localStorage.setItem('userEmail', credentials.email);
+            localStorage.setItem('token', result.token);
+            navigate('/');
+        }else{
+            alert('Invalid credentials');
         }
+    }
     
     const handleChange = (e) => {
         e.preventDefault();
@@ -25,12 +37,12 @@ export default function Login() {
     }
 
     return (
-        <Container maxWidth="sm" sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <Container maxWidth={false} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh',width:'100vw' }}>
         <Box sx={{ display: 'flex', backgroundColor: '#ffe6e6', borderRadius: 2, boxShadow: 3, overflow: 'hidden' }}>
           <Box sx={{ p: 4, backgroundColor: '#ffe6e6', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-            <img src="https://oaidalleapiprodscus.blob.core.windows.net/private/org-BVbpSZmLndA7MfHIxv2ahIKS/user-IBY8IaMXtVn7IVIdZeyvjx16/img-a2CLvO9S80J7cQiLYpLYBGq0.png?st=2024-09-04T08%3A23%3A31Z&amp;se=2024-09-04T10%3A23%3A31Z&amp;sp=r&amp;sv=2024-08-04&amp;sr=b&amp;rscd=inline&amp;rsct=image/png&amp;skoid=d505667d-d6c1-4a0a-bac7-5c84a87759f8&amp;sktid=a48cca56-e6da-484e-a814-9c849652bcb3&amp;skt=2024-09-03T23%3A52%3A50Z&amp;ske=2024-09-04T23%3A52%3A50Z&amp;sks=b&amp;skv=2024-08-04&amp;sig=g9lGsE/IBLGH5qV1NE9uCv/S5Ve2lR%2BXTJuIisighso%3D" alt="Logo" width="100" height="100" />
-            <Typography variant="h4" component="h2" sx={{ mb: 2 }}>
-              Welcome to WanderNest !!!
+            <img src="" alt="Logo" width="100" height="100" />
+            <Typography variant="h4" component="h2" sx={{ mb: 2 }} style={{color:'#000000'}}>
+              Welcome to TravelGram !!!
             </Typography>
             <form onSubmit={handleLogin}>
               <TextField
@@ -39,6 +51,7 @@ export default function Login() {
                 label="Enter your Email"
                 fullWidth
                 margin="normal"
+                value={credentials.email}
                 onChange={handleChange}
               />
               <TextField
@@ -47,6 +60,7 @@ export default function Login() {
                 label="Enter Password"
                 fullWidth
                 margin="normal"
+                value={credentials.password}
                 onChange={handleChange}
               />
               <FormControlLabel
@@ -75,12 +89,13 @@ export default function Login() {
                 </Link>
               </Box>
               <Typography variant="body2">
-                Don't have an account? <Link href="#">Sign up</Link>
+                Don't have an account? 
+                <RouterLink to="/signup">SignUp</RouterLink>
               </Typography>
             </form>
           </Box>
           <Box sx={{ display: { xs: 'none', md: 'block' }, width: '50%' }}>
-            <img src={require("../assets/login_image.jpeg").default} alt="A serene beach with a boat and palm trees at sunset" width="100%" height="auto" style={{ objectFit: 'cover', borderRadius: '0 10px 10px 0' }} />
+            <img src={loginImage} alt="A serene beach with a boat and palm trees at sunset" width="100%" height="auto" style={{ objectFit: 'cover', borderRadius: '0 10px 10px 0' }} />
           </Box>
         </Box>
       </Container>
