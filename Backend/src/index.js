@@ -3,7 +3,7 @@ import dotenv from 'dotenv'
 import connectDB from './db/db.js';
 import cors from "cors"
 import cookieParser from "cookie-parser"
-
+import userRouter from './routes/user.routes.js'
 const app = express();
 dotenv.config();
 
@@ -19,6 +19,8 @@ app.use(express.urlencoded({extended:true,limit:'16kb'}));
 app.use(express.static("public"));
 
 app.use(cookieParser());
+
+app.use("/api/v1/users",userRouter);
 
 connectDB()
 .then(()=>{
