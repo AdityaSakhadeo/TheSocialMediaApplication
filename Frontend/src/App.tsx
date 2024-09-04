@@ -1,4 +1,10 @@
 import { useEffect, useState } from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route
+} from "react-router-dom";
+import Login from "./screens/Login";
 import axios from 'axios';
 import "./App.css";
 
@@ -23,7 +29,7 @@ function App() {
 
   return (
     <>
-      <h1>There are {destinations.length} destinations available</h1>
+      {/* <h1>There are {destinations.length} destinations available</h1>
       {
         destinations.map((destination) => (
           <div key={destination.id}>
@@ -31,7 +37,12 @@ function App() {
             <p>City: {destination.city}</p>
           </div>
         ))
-      }
+      } */}
+      <Router>
+        <Routes>
+        <Route path="/login" element={<Login />} />
+        </Routes>
+        </Router>
     </>
   );
 }
