@@ -1,6 +1,3 @@
-
-
-
 import { useState } from 'react';
 import { TextField, Button, Checkbox, FormControlLabel, Typography, Container, Box, Divider, Link, Grid, colors } from '@mui/material';
 import { Google as GoogleIcon, Facebook as FacebookIcon, Twitter as TwitterIcon } from '@mui/icons-material';
@@ -102,4 +99,5 @@ export default function Signup() {
       </Container>
     )
 }
+
 
