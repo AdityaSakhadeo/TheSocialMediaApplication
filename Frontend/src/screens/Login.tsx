@@ -11,7 +11,7 @@ export default function Login() {
     const [credentials , setCredentials] = useState({email: '', password: ''});
 
 
-    const handleLogin = async (e) => {
+    const handleLogin = async (e:any) => {
         e.preventDefault();
         const response = await fetch('http://localhost:4000/api/v1/users/login', {
             method: 'POST',
@@ -31,7 +31,7 @@ export default function Login() {
         }
     }
     
-    const handleChange = (e) => {
+    const handleChange = (e:any) => {
         e.preventDefault();
         setCredentials({...credentials, [e.target.name]: e.target.value});
     }

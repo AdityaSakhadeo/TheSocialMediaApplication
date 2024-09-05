@@ -6,7 +6,7 @@ import signup_image from '../assets/login_image.jpeg';
 export default function Signup() {
     const [credentials , setCredentials] = useState({name: '', email: '', password: ''});
 
-    const handleSignup = async (e) => {
+    const handleSignup = async (e:any) => {
         e.preventDefault();
         const response = await fetch('/api/signup', {
             method: 'POST',
@@ -17,7 +17,7 @@ export default function Signup() {
         });
     }
     
-    const handleChange = (e) => {
+    const handleChange = (e:any) => {
         e.preventDefault();
         setCredentials({...credentials, [e.target.name]: e.target.value});
     }
