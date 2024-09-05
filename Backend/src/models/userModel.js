@@ -3,10 +3,10 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt"; //Helps while hashing the password
 import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2";
 
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+// const mongoose = require("mongoose");
+// const Schema = mongoose.Schema;
 
-const UserSchema = new Schema(
+const userSchema = new Schema(
   {
     username: {
       type: String,
@@ -79,7 +79,7 @@ const UserSchema = new Schema(
 
 userSchema.pre("save", async function (next) {
   if (this.isModified("password")) return next();
-  this.password = bcrypt.hash(this.password, 10);
+  this.password = await bcrypt.hash(this.password, 10);
   next();
 });
 
@@ -118,4 +118,4 @@ userSchema.methods.genrateRefreshToken = function () {
       );
       return accessToken;
 };
-export const User = mongoose.model("users", UserSchema);
+export const User = mongoose.model("users", userSchema);
