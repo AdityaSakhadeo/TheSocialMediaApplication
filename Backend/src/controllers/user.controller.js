@@ -5,11 +5,11 @@ import {uploadOnCloudinary} from '../utils/cloudinary.js'
 import { ApiResponse } from "../utils/APIResponse.js";
 
 const registerUser = asyncHandler(async (req, res) => {
-  const { username, email, phone, fullName, password } = req.body;
+  const { username, email, phoneNumber, fullName, password } = req.body;
 
   //Checking if all the fields are received or not
   if (
-    [username, email, phone, fullName, password].some(
+    [username, email, phoneNumber, fullName, password].some(
       (field) => field?.trim() === ""
     )
   ) {
@@ -40,11 +40,10 @@ const registerUser = asyncHandler(async (req, res) => {
 
   const user = await User.create({
     username:username.toLowerCase(),
-    email,
-    fullName,
-    phone,
     password,
-    profilePhoto:profilePhoto?.url || ""
+    fullName,
+    phoneNumber,
+    profilePhoto: ""
   })
 
   const createdUser = await User.findById(user._id).select(

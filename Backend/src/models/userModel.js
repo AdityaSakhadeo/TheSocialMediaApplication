@@ -27,6 +27,11 @@ const userSchema = new Schema(
       type: String,
       required: true,
     },
+    email:
+    {
+      type: String,
+      default:''
+    },
     followers: {
       type: [Schema.Types.ObjectId],
       ref: "User",
