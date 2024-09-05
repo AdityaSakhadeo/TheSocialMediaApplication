@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { TextField, Button, Checkbox, FormControlLabel, Typography, Container, Box, Divider, Link, Grid, colors } from '@mui/material';
+import { TextField, Button, Checkbox, FormControlLabel, Typography, Container, Box, Divider, Link, ThemeProvider } from '@mui/material';
 import { Google as GoogleIcon, Facebook as FacebookIcon, Twitter as TwitterIcon } from '@mui/icons-material';
 import signup_image from '../assets/login_image.jpeg';
 
