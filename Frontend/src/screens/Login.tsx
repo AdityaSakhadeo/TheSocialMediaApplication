@@ -1,8 +1,11 @@
 import { useState } from 'react';
-import { TextField, Button, Checkbox, FormControlLabel, Typography, Container, Box, Divider, Link as MuiLink } from '@mui/material';
+import { TextField, Button, Checkbox, FormControlLabel, Typography, Container, Box, Divider, Link as MuiLink, ThemeProvider } from '@mui/material';
 import { Google as GoogleIcon, Facebook as FacebookIcon, Twitter as TwitterIcon } from '@mui/icons-material';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import loginImage from '../assets/login_image.jpeg';
+import theme from './theme/theme';
+
+
 export default function Login() {
     let navigate = useNavigate()
 
@@ -35,6 +38,8 @@ export default function Login() {
     }
 
     return (
+      <ThemeProvider theme={theme}>
+
       <Container maxWidth={false} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', width: '100vw' }}>
       <Box sx={{ display: 'flex', backgroundColor: '#ffe6e6', borderRadius: 2, boxShadow: 3, overflow: 'hidden' }}>
         <Box sx={{ p: 4, backgroundColor: '#ffe6e6', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
@@ -95,6 +100,8 @@ export default function Login() {
         </Box>
       </Box>
     </Container>
+    
+    </ThemeProvider>
     )
     
 }

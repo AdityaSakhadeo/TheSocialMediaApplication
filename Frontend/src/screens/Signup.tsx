@@ -23,6 +23,8 @@ export default function Signup() {
     }
 
     return (
+
+      <ThemeProvider theme={theme}>
         <Container maxWidth="xl" sx={{ display: 'flex',justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
         <Box sx={{ display: 'flex', backgroundColor: '#ffe6e6', borderRadius: 2, boxShadow: 3, overflow: 'hidden' }}>
           <Box sx={{ p: 4, backgroundColor: '#ffe6e6', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
@@ -97,6 +99,7 @@ export default function Signup() {
           </Box>
         </Box>
       </Container>
+      </ThemeProvider>
     )
 }
 
