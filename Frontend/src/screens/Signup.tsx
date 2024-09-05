@@ -20,7 +20,7 @@ export default function Signup() {
         // Handle response accordingly
     };
 
-    const handleChange = (e) => {
+    const handleChange = (e:any) => {
         setCredentials({ ...credentials, [e.target.name]: e.target.value });
     };
 
