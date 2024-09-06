@@ -8,7 +8,7 @@ import theme from '../theme/theme';  // Assuming you have the theme file
 export default function Signup() {
     const [credentials, setCredentials] = useState({ name: '', email: '', password: '' });
 
-    const handleSignup = async (e) => {
+    const handleSignup = async (e:any) => {
         e.preventDefault();
         const response = await fetch('/api/signup', {
             method: 'POST',
@@ -20,7 +20,7 @@ export default function Signup() {
         // Handle response accordingly
     };
 
-    const handleChange = (e) => {
+    const handleChange = (e:any) => {
         setCredentials({ ...credentials, [e.target.name]: e.target.value });
     };
 
