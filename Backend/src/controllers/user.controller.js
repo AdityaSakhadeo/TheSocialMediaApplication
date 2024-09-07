@@ -19,11 +19,11 @@ const registerUser = asyncHandler(async (req, res) => {
   //Add more validations here if necessary
 
   //Now check if the user is already there or not by checking if username or email is already there
-  const existedUser=User.findOne({
+  const existedUser= await User.findOne({
     $or: [{ username }, { email }],  //to be changed when once used
   });
 
-  if (!existedUser) {
+  if (existedUser) {
     throw new ApiError(409,"The user with this username or emial already exists")
   }
 
