@@ -11,15 +11,15 @@ interface Destination {
 export default function Home() {
     const [destinations, setDestinations] = useState<Destination[]>([]);
 
-    useEffect(() => {
-        axios.get('/api/destinations')
-        .then((response) => {
-            console.log("Response::", response);
-            setDestinations(response.data);
-        }).catch((err) => {
-            console.log(err);
-        });
-    }, [])
+    // useEffect(() => {
+    //     axios.get('/api/destinations')
+    //     .then((response) => {
+    //         console.log("Response::", response);
+    //         setDestinations(response.data);
+    //     }).catch((err) => {
+    //         console.log(err);
+    //     });
+    // }, [])
 
     return (
         <>
