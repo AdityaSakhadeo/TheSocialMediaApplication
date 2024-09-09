@@ -24,7 +24,7 @@ const registerUser = asyncHandler(async (req, res) => {
   });
 
   if (existedUser) {
-    throw new ApiError(409,"The user with this username or emial already exists")
+    throw new ApiError(409,"The user with this username or email already exists")
   }
 
   //Dealing the with the image uploading
