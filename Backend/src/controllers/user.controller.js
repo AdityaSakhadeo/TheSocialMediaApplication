@@ -4,7 +4,7 @@ import { User } from "../models/userModel.js";
 import {uploadOnCloudinary} from '../utils/cloudinary.js'
 import { ApiResponse } from "../utils/APIResponse.js";
 
-const registerUser = asyncHandler(async (req, res) => {
+export const registerUser = asyncHandler(async (req, res) => {
   const { username, email, phoneNumber, fullName, password } = req.body;
 
   //Checking if all the fields are received or not
@@ -62,10 +62,9 @@ const registerUser = asyncHandler(async (req, res) => {
   
 });
 
-const loginUser = asyncHandler(async (req, res) => {
+export const loginUser = asyncHandler(async (req, res) => {
   res.status(200).json({
     message: "ok",
   });
 });
 
-export default registerUser;
