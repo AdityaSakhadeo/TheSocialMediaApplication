@@ -63,8 +63,34 @@ export const registerUser = asyncHandler(async (req, res) => {
 });
 
 export const loginUser = asyncHandler(async (req, res) => {
-  res.status(200).json({
-    message: "ok",
-  });
+  const { email, password } = req.body;
+
+  // Check if both fields are provided
+  if (!email || !password) {
+    throw new ApiError(400, "Please provide both email and password");
+  }
+
+  // Find the user by email
+  const user = await User.findOne({ email }).select("+password");
+  if (!user) {
+    throw new ApiError(404, "User not found with this email");
+  }
+
+  // Compare the provided password with the stored hashed password
+  const isPasswordMatch = await bcrypt.compare(password, user.password);
+  if (!isPasswordMatch) {
+    throw new ApiError(401, "Invalid credentials");
+  }
+
+  // Create JWT token (valid for 1 hour)
+  const token = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: "1h" });
+
+  // Remove sensitive fields before sending user data
+  const userData = await User.findById(user._id).select("-password -refreshToken");
+
+  // Respond with the user data and token
+  res.status(200).json(
+    new ApiResponse(200, { user: userData, token }, "Login successful")
+  );
 });
 
