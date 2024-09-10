@@ -26,11 +26,14 @@ export default function Login() {
   const [credentials, setCredentials] = useState({ email: "", password: "" });
 
   const handleLogin = async (e: any) => {
+    
     e.preventDefault();
+    // console.log(credentials);
     const response = await fetch("http://localhost:4000/api/v1/users/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "Allow-Control-Allow-Origin": "*",
       },
       body: JSON.stringify({
         email: credentials.email,
@@ -42,14 +45,14 @@ export default function Login() {
     if (result.success) {
       localStorage.setItem("userEmail", credentials.email);
       localStorage.setItem("token", result.token);
-      navigate("/");
+      navigate("/home");
     } else {
       alert("Invalid credentials");
     }
   };
 
   const handleChange = (e: any) => {
-    setCredentials({ ...credentials, [e.target.name]: e.target.value });
+    setCredentials({ ...credentials, [e.target.id]: e.target.value });
   };
 
   return (
@@ -72,7 +75,7 @@ export default function Login() {
           <Stack width={"100%"} height={"auto"}>
             <Typography fontSize={"14px"}>Email</Typography>
             <TextField
-              id="userName"
+              id="email"
               variant="standard"
               placeholder="Enter Email"
               type="email"
@@ -94,9 +97,9 @@ export default function Login() {
           <Stack width={"100%"} height={"auto"}>
             <Button
               variant="contained"
-              color="primary"
               onClick={handleLogin}
               fullWidth
+              sx={{ backgroundColor: "#000000" }}
             >
               Login
             </Button>
