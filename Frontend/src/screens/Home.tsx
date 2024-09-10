@@ -13,9 +13,15 @@ export default function Home() {
 
     return (
         <>
-        <Stack direction="row" width={"100vw"} height={"100vh"} >
-            <Typography variant="h4">Welcome to TravelGram {localStorage.getItem("userEmail")}</Typography>
-        </Stack>
+        <h1>There are {destinations.length} destinations available</h1>
+        {
+            destinations.map((destination) => (
+                <div key={destination.id}>
+                    <h2>{destination.name}</h2>
+                    <p>City: {destination.city}</p>
+                </div>
+            ))
+        }
         </>
     )
 }
