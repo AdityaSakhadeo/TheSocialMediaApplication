@@ -23,15 +23,7 @@ export default function Home() {
 
     return (
         <>
-        <h1>There are {destinations.length} destinations available</h1>
-        {
-            destinations.map((destination) => (
-                <div key={destination.id}>
-                    <h2>{destination.name}</h2>
-                    <p>City: {destination.city}</p>
-                </div>
-            ))
-        }
+        <h1>Home</h1>
         </>
     )
 }
