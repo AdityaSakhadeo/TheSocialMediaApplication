@@ -72,12 +72,35 @@ export default function Login() {
           <Stack width={"100%"} height={"auto"}>
             <Typography fontSize={"14px"}>Email</Typography>
             <TextField
-              id="outlined-basic"
+              id="userName"
               variant="standard"
               placeholder="Enter Email"
+              type="email"
               onChange={handleChange}
             />
           </Stack>
+          {/* stack for password */}
+          <Stack width={"100%"} height={"auto"}>
+            <Typography fontSize={"14px"}>Password</Typography>
+            <TextField
+              id="password"
+              variant="standard"
+              placeholder="Enter password"
+              type="password"
+              onChange={handleChange}
+            />
+          </Stack>
+          {/* Stack for the login button */}
+          <Stack width={"100%"} height={"auto"}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleLogin}
+              fullWidth
+            >
+              Login
+            </Button>
+            </Stack>
         </Stack>
         {/* Stack for Image */}
         <Stack width={"50%"} height={"100vh"}></Stack>
