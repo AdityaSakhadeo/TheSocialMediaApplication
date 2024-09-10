@@ -1,2 +1,4 @@
 This is the social media application without theme :)
 changed for samarth branch
+For any API please refer following as a base URL- http://localhost:4000/api/v1/
+For users - http://localhost:4000/api/v1/users/
