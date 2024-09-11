@@ -47,7 +47,7 @@ export default function Login() {
 
   return (
     <>
-      <Stack width={"100vw"} height={"100vh"} direction={"row"}>
+      <Stack width={"100vw"} height={"100vh"} direction={"row"} >
         {/* Stack for implementing textinputs from the user */}
         <Stack
           width={"50%"}
@@ -81,6 +81,7 @@ export default function Login() {
               placeholder="Enter password"
               type="password"
               onChange={handleChange}
+              sx={{ marginBottom: "20px" }}
             />
           </Stack>
           {/* Stack for the login button */}
