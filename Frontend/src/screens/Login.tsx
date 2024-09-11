@@ -2,23 +2,13 @@ import { useState } from "react";
 import {
   TextField,
   Button,
-  Checkbox,
-  FormControlLabel,
   Typography,
-  Container,
-  Box,
-  Divider,
-  Link as MuiLink,
-  ThemeProvider,
   Stack,
 } from "@mui/material";
-import {
-  Google as GoogleIcon,
-  Facebook as FacebookIcon,
-  Twitter as TwitterIcon,
-} from "@mui/icons-material";
-import { Link as RouterLink, useNavigate } from "react-router-dom";
+
+import {useNavigate } from "react-router-dom";
 import TravelGram from "../assets/TravelGram.jpg";
+import loginImage from "../assets/login_image.jpeg";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -52,12 +42,12 @@ export default function Login() {
   };
 
   const handleChange = (e: any) => {
-    setCredentials({ ...credentials, [e.target.id]: e.target.value });
+    setCredentials({ ...credentials, [e.target.name]: e.target.value });
   };
 
   return (
     <>
-      <Stack width={"100vw"} height={"100vh"} direction={"row"}>
+      <Stack width={"100vw"} height={"100vh"} direction={"row"} >
         {/* Stack for implementing textinputs from the user */}
         <Stack
           width={"50%"}
@@ -75,7 +65,7 @@ export default function Login() {
           <Stack width={"100%"} height={"auto"}>
             <Typography fontSize={"14px"}>Email</Typography>
             <TextField
-              id="email"
+              name="email"
               variant="standard"
               placeholder="Enter Email"
               type="email"
@@ -86,11 +76,12 @@ export default function Login() {
           <Stack width={"100%"} height={"auto"}>
             <Typography fontSize={"14px"}>Password</Typography>
             <TextField
-              id="password"
+              name="password"
               variant="standard"
               placeholder="Enter password"
               type="password"
               onChange={handleChange}
+              sx={{ marginBottom: "20px" }}
             />
           </Stack>
           {/* Stack for the login button */}
@@ -99,7 +90,14 @@ export default function Login() {
               variant="contained"
               onClick={handleLogin}
               fullWidth
-              sx={{ backgroundColor: "#000000" }}
+              disableRipple
+              sx={{
+                backgroundColor: "#000000",  // Default background
+                color: "#FFFFFF",            // Default text color
+                "&:hover": {
+                  backgroundColor: "#333333", // Background color on hover
+                }
+              }}
             >
               Login
             </Button>
@@ -108,13 +106,21 @@ export default function Login() {
             <Typography fontSize={"14px"} color="#000000">Don't have an account?</Typography>
             <Button
               variant="contained"
+              disableRipple
               onClick={() => navigate("/signup")}
-              sx={{ backgroundColor: "#000000", fontSize: "12px", width:"50%"}}
+              sx={{   backgroundColor: "#000000",  // Default background
+                color: "#FFFFFF",            // Default text color
+                "&:hover": {
+                  backgroundColor: "#333333", // Background color on hover
+                }, fontSize: "12px", width:"50%"}}
             >Sign up</Button>
             </Stack>
         </Stack>
+
         {/* Stack for Image */}
-        <Stack width={"50%"} height={"100vh"}></Stack>
+        <Stack width={"50%"} height={"100vh"}>
+          <img src={loginImage} width={"100%"} height={"100%"} />
+        </Stack>
       </Stack>
     </>
   );
