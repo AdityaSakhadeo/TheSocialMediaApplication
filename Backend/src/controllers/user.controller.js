@@ -3,7 +3,7 @@ import { ApiError } from "../utils/APIError.js";
 import { User } from "../models/userModel.js";
 import {uploadOnCloudinary} from '../utils/cloudinary.js'
 import { ApiResponse } from "../utils/APIResponse.js";
-
+import bcrypt from 'bcrypt'
 export const registerUser = asyncHandler(async (req, res) => {
   const { username, email, phoneNumber, fullName, password } = req.body;
 
@@ -83,14 +83,14 @@ export const loginUser = asyncHandler(async (req, res) => {
   }
 
   // Create JWT token (valid for 1 hour)
-  const token = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: "1h" });
-
+  // const token = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: "1h" });
+  const token="aditya"
   // Remove sensitive fields before sending user data
   const userData = await User.findById(user._id).select("-password -refreshToken");
 
   // Respond with the user data and token
   res.status(200).json(
-    new ApiResponse(200, { user: userData, token }, "Login successful")
-  );
+    new ApiResponse(200, { user: userData,token:token }, "Login successful")
+  );
 });
 
