@@ -33,6 +33,7 @@ export default function Login() {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "Allow-Control-Allow-Origin": "*",
       },
       body: JSON.stringify({
         email: credentials.email,
@@ -43,8 +44,8 @@ export default function Login() {
     console.log(result);
     if (result.success) {
       localStorage.setItem("userEmail", credentials.email);
-      localStorage.setItem("token", result.token);
-      navigate("/");
+      // localStorage.setItem("token", result.token);
+      navigate("/home");
     } else {
       alert("Invalid credentials");
     }
@@ -102,6 +103,14 @@ export default function Login() {
             >
               Login
             </Button>
+            </Stack>
+            <Stack width={"100%"} height={"auto"}>
+            <Typography fontSize={"14px"} color="#000000">Don't have an account?</Typography>
+            <Button
+              variant="contained"
+              onClick={() => navigate("/signup")}
+              sx={{ backgroundColor: "#000000", fontSize: "12px", width:"50%"}}
+            >Sign up</Button>
             </Stack>
         </Stack>
         {/* Stack for Image */}
