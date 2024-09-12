@@ -2,23 +2,13 @@ import { useState } from "react";
 import {
   TextField,
   Button,
-  Checkbox,
-  FormControlLabel,
   Typography,
-  Container,
-  Box,
-  Divider,
-  Link as MuiLink,
-  ThemeProvider,
   Stack,
 } from "@mui/material";
-import {
-  Google as GoogleIcon,
-  Facebook as FacebookIcon,
-  Twitter as TwitterIcon,
-} from "@mui/icons-material";
-import { Link as RouterLink, useNavigate } from "react-router-dom";
+
+import {useNavigate } from "react-router-dom";
 import TravelGram from "../assets/TravelGram.jpg";
+import loginImage from "../assets/login_image.jpeg";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -26,11 +16,14 @@ export default function Login() {
   const [credentials, setCredentials] = useState({ email: "", password: "" });
 
   const handleLogin = async (e: any) => {
+    
     e.preventDefault();
+    // console.log(credentials);
     const response = await fetch("http://localhost:4000/api/v1/users/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "Allow-Control-Allow-Origin": "*",
       },
       body: JSON.stringify({
         email: credentials.email,
@@ -41,8 +34,8 @@ export default function Login() {
     console.log(result);
     if (result.success) {
       localStorage.setItem("userEmail", credentials.email);
-      localStorage.setItem("token", result.token);
-      navigate("/");
+      // localStorage.setItem("token", result.token);
+      navigate("/home");
     } else {
       alert("Invalid credentials");
     }
@@ -54,7 +47,7 @@ export default function Login() {
 
   return (
     <>
-      <Stack width={"100vw"} height={"100vh"} direction={"row"}>
+      <Stack width={"100vw"} height={"100vh"} direction={"row"} >
         {/* Stack for implementing textinputs from the user */}
         <Stack
           width={"50%"}
@@ -72,15 +65,62 @@ export default function Login() {
           <Stack width={"100%"} height={"auto"}>
             <Typography fontSize={"14px"}>Email</Typography>
             <TextField
-              id="outlined-basic"
+              name="email"
               variant="standard"
               placeholder="Enter Email"
+              type="email"
               onChange={handleChange}
             />
           </Stack>
+          {/* stack for password */}
+          <Stack width={"100%"} height={"auto"}>
+            <Typography fontSize={"14px"}>Password</Typography>
+            <TextField
+              name="password"
+              variant="standard"
+              placeholder="Enter password"
+              type="password"
+              onChange={handleChange}
+              sx={{ marginBottom: "20px" }}
+            />
+          </Stack>
+          {/* Stack for the login button */}
+          <Stack width={"100%"} height={"auto"}>
+            <Button
+              variant="contained"
+              onClick={handleLogin}
+              fullWidth
+              disableRipple
+              sx={{
+                backgroundColor: "#000000",  // Default background
+                color: "#FFFFFF",            // Default text color
+                "&:hover": {
+                  backgroundColor: "#333333", // Background color on hover
+                }
+              }}
+            >
+              Login
+            </Button>
+            </Stack>
+            <Stack width={"100%"} height={"auto"}>
+            <Typography fontSize={"14px"} color="#000000">Don't have an account?</Typography>
+            <Button
+              variant="contained"
+              disableRipple
+              onClick={() => navigate("/signup")}
+              sx={{   backgroundColor: "#000000",  // Default background
+                color: "#FFFFFF",            // Default text color
+                "&:hover": {
+                  backgroundColor: "#333333", // Background color on hover
+                }, fontSize: "12px", width:"50%"}}
+            >Sign up</Button>
+            </Stack>
         </Stack>
+
         {/* Stack for Image */}
-        <Stack width={"50%"} height={"100vh"}></Stack>
+        <Stack width={"50%"} height={"100vh"}>
+          <img src={loginImage} width={"100%"} height={"100%"} />
+        </Stack>
       </Stack>
     </>
   );
