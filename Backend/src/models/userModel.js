@@ -30,6 +30,7 @@ const userSchema = new Schema(
     email:
     {
       type: String,
+      required: true,
       default:''
     },
     followers: {
