@@ -7,6 +7,7 @@ interface Destination {
     name: string;
     city: string;
 }
+const user = localStorage.getItem("userEmail");
 
 export default function Home() {
     // const [destinations, setDestinations] = useState<Destination[]>([]);
@@ -14,7 +15,7 @@ export default function Home() {
     return (
         <>
         <Stack width={"100vw"} height={"100vh"} direction={"row"}>
-            <Typography variant="h1">Welcome to TravelGram {localStorage.getItem("userEmail")}</Typography>
+            <Typography variant="h1" sx={{color:"black"}}>Welcome to TravelGram {user}</Typography>
         </Stack>
         </>
     )
