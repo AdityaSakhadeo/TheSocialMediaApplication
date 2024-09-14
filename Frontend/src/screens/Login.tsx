@@ -11,11 +11,16 @@ import TravelGram from "../assets/TravelGram.jpg";
 import loginImage from "../assets/login_image.jpeg";
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import { useSelector,useDispatch } from "react-redux";
+import { setLoading } from "../redux/slices/loaderSlice";
 import "../styles/Login.css";
+import { RootState } from "../redux/store/store";
+import Loader from '../../components/loader'
 
 export default function Login() {
   const navigate = useNavigate();
-
+  const dispatch = useDispatch();
+  const isLoading = useSelector((state: RootState) => state.loader.isLoading);
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down('sm'));
 
@@ -36,6 +41,7 @@ export default function Login() {
   const handleLogin = async (e: any) => {
     
        e.preventDefault();
+       dispatch(setLoading(true));
     try {
       const response = await fetch("http://localhost:4000/api/v1/users/login", {
         method: "POST",
@@ -48,7 +54,7 @@ export default function Login() {
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
-
+      dispatch(setLoading(false));
       const result = await response.json();
       console.log(result);
 
@@ -62,6 +68,7 @@ export default function Login() {
     } catch (error) {
       console.error("There was a problem with the fetch operation:", error);
       alert("An error occurred. Please try again.");
+      dispatch(setLoading(false));
     }
   };
 
@@ -71,6 +78,9 @@ export default function Login() {
 
   return (
     <>
+    {
+      isLoading && <Loader/>
+    }
     <Stack width={"100vw"} height={"100vh"} direction={isSmall ? "column":"row"}>
     
     {/* Stack for Image */}
