@@ -8,7 +8,8 @@ import Home from "./screens/Home";
 import Login from "./screens/Login";
 import Signup from "./screens/Signup";
 import "./App.css";
-
+import { Provider } from "react-redux";
+import {store} from './redux/store/store.js';
 
 
 export default function App() {
@@ -16,6 +17,7 @@ export default function App() {
 
   return (
     <>
+    <Provider store={store} >
       <Router>
         <Routes>
         <Route path="/" element={<Login />}/> 
@@ -23,6 +25,7 @@ export default function App() {
         <Route  path="/home" element={<Home />} />
         </Routes>
       </Router>
+      </Provider>
     </>
   );
 }
