@@ -1,22 +1,25 @@
-import {useState, useEffect} from 'react';
-import {TextField, Button, Stack, Typography} from '@mui/material';
-import axios from 'axios';
-
-interface Destination {
-    id: number;
-    name: string;
-    city: string;
-}
-const user = localStorage.getItem("userEmail");
+import { Stack, Typography } from '@mui/material';
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function Home() {
-    // const [destinations, setDestinations] = useState<Destination[]>([]);
+  const navigate = useNavigate();
+  const userData = JSON.parse(localStorage.getItem("userInformation") || '{}');
 
-    return (
-        <>
-        <Stack width={"100vw"} height={"100vh"} direction={"row"}>
-            <Typography variant="h1" sx={{color:"black"}}>Welcome to TravelGram {user}</Typography>
-        </Stack>
-        </>
-    )
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/");
+    }
+      console.log("successfully logged in");
+
+  }, [navigate]);
+
+  return (
+    <Stack width={"100vw"} height={"100vh"} direction={"row"}>
+      <Typography variant="h1" sx={{ color: "black" }}>
+        Welcome to TravelGram {userData?.user?.username}
+      </Typography>
+    </Stack>
+  );
 }
