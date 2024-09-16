@@ -29,8 +29,19 @@ export default function Login() {
   const isLoading = useSelector((state: RootState) => state.loader.isLoading);
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down('md'));
-  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+  
 
+  // Check if user is already logged in
+  useEffect(() => {
+    dispatch(setLoading(true));
+    const token = localStorage.getItem("token");
+    if (token) {
+      navigate("/home"); // Redirect to home if token exists
+      dispatch(setLoading(false));
+    }
+    dispatch(setLoading(false));
+  }, [navigate]);
+  
 
   useEffect(() => {
     if (!isSmall) {
@@ -47,24 +58,12 @@ export default function Login() {
 
   const [credentials, setCredentials] = useState({ email: "", password: "" });
   const [passwordError, setPasswordError] = useState(false);
-  const [loading, setLoading] = useState(false);
 
-
-  const checkType = (value: string) => {
-    if (value.includes("@")) {
-      return true;
-    }
-    return false;
-  };
 
   const handleLogin = async (e: any) => {
-    
-
        e.preventDefault();
        dispatch(setLoading(true));
        setPasswordError(false);
-
-
     try {
       const response = await fetch("http://localhost:4000/api/v1/users/login", {
         method: "POST",
@@ -79,11 +78,11 @@ export default function Login() {
       }
       dispatch(setLoading(false));
       const result = await response.json();
-      console.log(result);
+      // console.log("result", result);
 
       if (result.success) {
-        localStorage.setItem("userEmail", credentials.email);
-        localStorage.setItem("token", result.token);
+        localStorage.setItem("userInformation", JSON.stringify(result.data));
+        localStorage.setItem("token", JSON.stringify(result.data.accessToken));
         navigate("/home");
       } else {
         setPasswordError(true);
@@ -122,11 +121,14 @@ export default function Login() {
   const handleChange = (e: any) => { 
   const { name, value } = e.target;
   setCredentials({ ...credentials, [name]: value });
+  };
 
-  if (name === 'password') {
-    // Only show the error if the password does not meet the criteria and the field is not empty
-    setPasswordError(!passwordRegex.test(value) && value !== "");
-  }
+
+  const checkType = (value: string) => {
+    if (value.includes("@")) {
+      return true;
+    }
+    return false;
   };
 
   return (
@@ -138,7 +140,7 @@ export default function Login() {
     
     {/* Stack for Image */}
     {!isSmall && (
-      <Stack width={"50%"} height={"100%"} padding={"15px"} sx={{ }}>
+      <Stack width={"50%"} height={"100%"} padding={"15px"} sx={{}}>
         <img
           src={loginImage}
           style={{
@@ -167,12 +169,13 @@ export default function Login() {
       padding={"15px"}
       paddingRight={isSmall ? "15px" : "0px"} 
       margin={isSmall ? "0px" : "15px"} // No margin on small screens
+      sx={{backgroundColor:"#FFECEC"}}
     >
       {/* TravelGram Logo */}
       <img src={TravelGram} 
       style={{ borderRadius: "40%", boxShadow: "0 0 5px 0 #000000", marginBottom: "20px" ,width:"100px", height:"100px"}}
       alt="TravelGram"/>
-      <Typography variant="h2" fontSize={"20px"} marginBottom={"20px"}>
+      <Typography variant="h2" fontSize={"20px"} marginBottom={"20px"} sx={{ color:"#000000", backgroundColor:"#FFECEC"}}>
         Welcome to TravelGram !!
       </Typography>
 
@@ -182,9 +185,10 @@ export default function Login() {
           name="email"
           variant="standard"
           placeholder="Enter Email or Username or Phone Number"
-          type={checkType(credentials.email) ? "email" : "text"}
+          type={checkType(credentials.email) ? "email" : "username"}
           onChange={handleChange}
           fullWidth
+          sx={{backgroundColor:"#FFECEC"}}
         />
       </Stack>
 
@@ -197,8 +201,7 @@ export default function Login() {
           type="password"
           onChange={handleChange}
           fullWidth
-          error={passwordError}
-          helperText={passwordError ? "Password must be at least 8 characters long and include uppercase, lowercase, number, and special character" : ""} // Optional helper text
+          sx={{backgroundColor:"#FFECEC"}}
         />
       </Stack>
 
@@ -209,20 +212,20 @@ export default function Login() {
           onClick={handleLogin}
           disableRipple
           sx={{
-            backgroundColor: "#000000", // Default background
+            backgroundColor: "#EBA51A",
             color: "#FFFFFF", // Default text color
             "&:hover": {
               backgroundColor: "#333333", // Background color on hover
             },
           }}
-          disabled={!credentials.email || !credentials.password || credentials.password.length < 6 || loading || !passwordRegex.test(credentials.password)}
+          disabled={!credentials.email || !credentials.password || credentials.password.length < 8 || isLoading }
         >
-          {loading ? <CircularProgress size={24} color="inherit" /> : "Login"}
+          {isLoading ? <CircularProgress size={24} color="inherit" /> : "Login"}
         </Button>
       </Stack>
 
           {/* Step 2: Add Divider with "--or--" */}
-          <Divider sx={{ width: isSmall ? "80%" : "70%", marginBottom: "20px", color:"black"}}>
+          <Divider sx={{ width: isSmall ? "80%" : "70%", marginBottom: "20px", color:"black", backgroundColor:"#FFECEC"}}>
             <Typography variant="body2">or</Typography>
           </Divider>
 
@@ -250,8 +253,8 @@ export default function Login() {
             </Stack>
 
       {/* Stack for the signup link */}
-      <Stack direction="row" alignItems="center" width={"100%"} justifyContent="center" marginTop={"2px"}>
-        <Typography fontSize={"14px"} color="#000000" marginRight={"5px"}>
+      <Stack direction="row" alignItems="center" width={"100%"} justifyContent="center" marginTop={"2px"} sx={{backgroundColor:"#FFECEC"}}>
+        <Typography fontSize={"14px"} color="#000000" marginRight={"5px"} >
           Don't have an account?
         </Typography>
         <Typography
@@ -261,7 +264,7 @@ export default function Login() {
             cursor: "pointer",
             color: "blue",
             textDecoration: "underline",
-            ":hover": { color: "darkblue" },
+            ":hover": { color: "darkblue" }
           }}
         >
           Sign up
