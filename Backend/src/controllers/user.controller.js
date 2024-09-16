@@ -25,26 +25,51 @@ const genrateAccessAndRefreshTokens = async (userId) => {
 export const registerUser = asyncHandler(async (req, res) => {
   const { username, email, phoneNumber, fullName, password } = req.body;
 
-  //Checking if all the fields are received or not
-  if (
-    [username, email, phoneNumber, fullName, password].some(
-      (field) => field?.trim() === ""
-    )
-  ) {
+  // Ensure either email or phone number is provided
+  if (!email && !phoneNumber) {
+    throw new ApiError(400, "Please enter either phone number or email address");
+  }
+
+  // Sanitize inputs (make sure null values are handled correctly)
+  const sanitizedEmail = email?.trim() === "" ? null : email?.trim();
+  const sanitizedPhone = phoneNumber?.trim() === "" ? null : phoneNumber?.trim();
+
+  // Validate other required fields
+  if ([username, fullName, password].some((field) => field?.trim() === "")) {
     throw new ApiError(400, "Please fill all the fields");
   }
 
-  //Add more validations here if necessary
+  // Check if the username, email, or phone number already exists
+  const existedUser = await User.findOne({ username: username.toLowerCase() });
+  const existedUserEmail = sanitizedEmail ? await User.findOne({ email: sanitizedEmail }) : null;
+  const existedUserPhoneNumber = sanitizedPhone ? await User.findOne({ phoneNumber: sanitizedPhone }) : null;
 
-  //Now check if the user is already there or not by checking if username or email is already there
-  const existedUser = await User.findOne({
-    $or: [{ username }, { email }], //to be changed when once used
-  });
+  if (existedUser) {
+    throw new ApiError(409, "The user with this username already exists");
+  }
+  if (existedUserEmail) {
+    throw new ApiError(409, "The user with this email already exists");
+  }
+  if (existedUserPhoneNumber) {
+    throw new ApiError(409, "The user with this phone number already exists");
+  }
 
   if (existedUser) {
     throw new ApiError(
       409,
-      "The user with this username or email already exists"
+      "The user with this username already exists"
+    );
+  }
+  if (existedUserEmail) {
+    throw new ApiError(
+      409,
+      "The user with this email already exists"
+    );
+  }
+  if (existedUserPhoneNumber) {
+    throw new ApiError(
+      409,
+      "The user with this phone number exists"
     );
   }
 
@@ -60,10 +85,10 @@ export const registerUser = asyncHandler(async (req, res) => {
 
   const user = await User.create({
     username: username.toLowerCase(),
-    email,
+    email: sanitizedEmail, // Store null if email is not provided
     password,
     fullName,
-    phoneNumber,
+    phoneNumber: sanitizedPhone, // Store null if phone number is not provided
     profilePhoto: "",
   });
 

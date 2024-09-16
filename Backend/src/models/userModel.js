@@ -23,15 +23,29 @@ const userSchema = new Schema(
       type: String,
       required: true,
     },
+    email: {
+      type: String,
+      unique:true,
+      sparse:true,
+      // validate: {
+      //   validator: function(v) {
+      //     // Custom validation for optional email
+      //     return v ? /\S+@\S+\.\S+/.test(v) : true;
+      //   },
+      //   message: props => `${props.value} is not a valid email!`
+      // }
+    },
     phoneNumber: {
       type: String,
-      required: true,
-    },
-    email:
-    {
-      type: String,
-      required: true,
-      default:''
+      unique:true,
+      sparse:true,
+      // validate: {
+      //   validator: function(v) {
+      //     // Custom validation for optional phone number
+      //     return v ? /^[0-9]{10}$/.test(v) : true;
+      //   },
+      //   message: props => `${props.value} is not a valid phone number!`
+      // }
     },
     followers: {
       type: [Schema.Types.ObjectId],
