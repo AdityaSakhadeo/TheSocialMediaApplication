@@ -83,28 +83,41 @@ export const registerUser = asyncHandler(async (req, res) => {
   // const profilePhoto = await uploadOnCloudinary(profilePhotoPath);
   //This will return the URL of the profile photo
 
-  const user = await User.create({
-    username: username.toLowerCase(),
-    email: sanitizedEmail, // Store null if email is not provided
-    password,
-    fullName,
-    phoneNumber: sanitizedPhone, // Store null if phone number is not provided
-    profilePhoto: "",
-  });
-
-  const createdUser = await User.findById(user._id).select(
-    "-password -refereshToken"
-  );
-
-  if (!createdUser) {
-    throw new ApiError(500, "Something went wrong while registering the user");
+  try {
+    const user = await User.create({
+      username: username.toLowerCase(),
+      email: sanitizedEmail, // Store null if email is not provided
+      password,
+      fullName,
+      phoneNumber: sanitizedPhone, // Store null if phone number is not provided
+      profilePhoto: "",
+    });
+  
+    const createdUser = await User.findById(user._id).select(
+      "-password -refereshToken"
+    );
+  
+    if (!createdUser) {
+      throw new ApiError(500, "Something went wrong while registering the user");
+    }
+  
+    return res
+      .status(201)
+      .json(
+        new ApiResponse(200, createdUser, "User created registered successfully")
+      );
+  } catch (error) {
+    if (error.name==="ValidationError") {
+      const messages = Object.values(error.errors).map((err) => err.message);
+      return res
+      .status(400)
+      .json(
+        new ApiResponse(400,'',messages)
+      )
+    }
+    throw new ApiError(500,"Server Error");
   }
 
-  return res
-    .status(201)
-    .json(
-      new ApiResponse(200, createdUser, "User created registered successfully")
-    );
 });
 
 export const loginUser = asyncHandler(async (req, res) => {
