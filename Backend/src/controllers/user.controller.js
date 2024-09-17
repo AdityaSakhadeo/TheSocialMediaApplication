@@ -140,6 +140,7 @@ export const loginUser = asyncHandler(async (req, res) => {
     $or: [{ username }, { email }, { phoneNumber }],
   });
 
+  console.log("User::: ",user);
   if (!user) {
     throw new ApiError(404, "User not found with this username or email");
   }

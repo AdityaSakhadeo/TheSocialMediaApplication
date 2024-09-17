@@ -56,7 +56,7 @@ export default function Login() {
     };
   }, [isSmall]);
 
-  const [credentials, setCredentials] = useState({ email: "", password: "" });
+  const [credentials, setCredentials] = useState({ input: "", password: "",logintype:"" });
   const [passwordError, setPasswordError] = useState(false);
 
 
@@ -64,6 +64,15 @@ export default function Login() {
        e.preventDefault();
        dispatch(setLoading(true));
        setPasswordError(false);
+       if (credentials.input.includes('@')) {
+        credentials.logintype="email";
+       }
+       else if (/^d+$/.test(credentials.input)) {
+        credentials.logintype="phoneNumber";
+       }
+       else{
+        credentials.logintype="username"
+       }
     try {
       const response = await fetch("http://localhost:4000/api/v1/users/login", {
         method: "POST",
@@ -124,6 +133,7 @@ export default function Login() {
   };
 
 
+
   const checkType = (value: string) => {
     if (value.includes("@")) {
       return true;
@@ -182,10 +192,10 @@ export default function Login() {
       {/* Stack for the Email Input */}
       <Stack width={"70%"} height={"auto"} marginBottom={"20px"} >
         <TextField
-          name="email"
+          name="input"
           variant="standard"
           placeholder="Enter Email or Username or Phone Number"
-          type={checkType(credentials.email) ? "email" : "username"}
+          type={checkType(credentials.input) ? "email" : "username"}
           onChange={handleChange}
           fullWidth
           sx={{backgroundColor:"#FFECEC"}}
@@ -218,7 +228,7 @@ export default function Login() {
               backgroundColor: "#333333", // Background color on hover
             },
           }}
-          disabled={!credentials.email || !credentials.password || credentials.password.length < 8 || isLoading }
+          disabled={!credentials.input || !credentials.password || credentials.password.length < 8 || isLoading }
         >
           {isLoading ? <CircularProgress size={24} color="inherit" /> : "Login"}
         </Button>

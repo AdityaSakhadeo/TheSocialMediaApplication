@@ -3,18 +3,22 @@ import { Link as MuiLink, ThemeProvider, Stack, TextField,Button, Typography} fr
 import { Google as GoogleIcon, Facebook as FacebookIcon, Twitter as TwitterIcon } from "@mui/icons-material";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import TravelGram from "../assets/TravelGram.jpg";
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../redux/store/store';
+import { setLoading } from '../redux/slices/loaderSlice';
 
 
 
 export default function Signup() {
   const navigate = useNavigate();
-
+  const dispatch = useDispatch();
+  const isLoading = useSelector((state: RootState) => state.loader.isLoading);
   const [credentials, setCredentials] = useState({ username: "", mobile: "", fullName: "", email: "", password: "" });
   const [mobileOrEmail, setMobileOrEmail] = useState(""); // Track the input separately
 
   const handleSignup = async (e: any) => {
     e.preventDefault();
-
+    dispatch(setLoading(true));
     const response = await fetch("http://localhost:4000/api/v1/users/register", {
       method: "POST",
       headers: {
@@ -34,19 +38,28 @@ export default function Signup() {
     console.log(result);
 
     if (result.success) {
-      localStorage.setItem("userEmail", credentials.email);
+      dispatch(setLoading(false));
+      alert("User Created successfully, now you can log in---->")
       navigate("/home");
     } else {
-      alert("Invalid credentials");
+      if (result.statusCode==400) {
+        dispatch(setLoading(false));
+        alert(result.message[0])
+      }
+      dispatch(setLoading(false));
     }
   };
 
   // Updated setSelectedFields to handle input properly
   const setSelectedFields = (input: string) => {
+    const mobile = /^[0-9]+$/
     if (input.includes("@")) {
       setCredentials({ ...credentials, email: input, mobile: "" });
-    } else if (input.length === 10 && !input.includes("@")) {
+    } else if (mobile.test(input)) {
       setCredentials({ ...credentials, mobile: input, email: "" });
+    }
+    else{
+      setCredentials({ ...credentials, email: input, mobile: "" });
     }
   };
 
