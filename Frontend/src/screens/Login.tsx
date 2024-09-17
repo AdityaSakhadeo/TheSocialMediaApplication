@@ -56,7 +56,7 @@ export default function Login() {
     };
   }, [isSmall]);
 
-  const [credentials, setCredentials] = useState({ input: "", password: "",logintype:"" });
+  const [credentials, setCredentials] = useState({ input: "",logintype:"",password:"" });
   const [passwordError, setPasswordError] = useState(false);
 
 
