@@ -67,7 +67,7 @@ export default function Login() {
        if (credentials.input.includes('@')) {
         credentials.logintype="email";
        }
-       else if (/^d+$/.test(credentials.input)) {
+       else if (/^\d+$/.test(credentials.input)) {
         credentials.logintype="phoneNumber";
        }
        else{
