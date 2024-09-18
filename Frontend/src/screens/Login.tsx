@@ -146,11 +146,11 @@ export default function Login() {
     {
       isLoading && <Loader/>
     }
-    <Stack width={"100vw"} height={"100vh"} direction={isSmall ? "column":"row"}>
+    <Stack width={"100vw"} height={"100vh"} direction={isSmall ? "column":"row"} sx={{backgroundColor:"#FFECEC"}}>
     
     {/* Stack for Image */}
     {!isSmall && (
-      <Stack width={"50%"} height={"100%"} padding={"15px"} sx={{}}>
+      <Stack width={"50%"} height={"100%"} padding={"15px"} sx={{backgroundColor:"#FFECEC"}}>
         <img
           src={loginImage}
           style={{
@@ -162,7 +162,7 @@ export default function Login() {
             height: "85%",
             margin: "auto",
             display: "block",
-            transition: "border-color 0.3s ease",
+            transition: "border-color 0.3s ease"
           }}
           alt="Login"
         />
@@ -234,13 +234,17 @@ export default function Login() {
         </Button>
       </Stack>
 
-          {/* Step 2: Add Divider with "--or--" */}
-          <Divider sx={{ width: isSmall ? "80%" : "70%", marginBottom: "20px", color:"black", backgroundColor:"#FFECEC"}}>
-            <Typography variant="body2">or</Typography>
-          </Divider>
+      {/* Step 2: Add Divider with "--or--" */}
+      <Stack width={isSmall ? "80%" : "70%"} direction="row" alignItems="center" spacing={1} marginBottom="20px" sx={{ backgroundColor: "#FFECEC" }} >
+        <Divider sx={{ flexGrow: 1, backgroundColor: "#FFECEC" }} />
+        <Typography variant="body2" sx={{ backgroundColor: "#FFECEC", padding: "0 10px", color:"#000000" }}>
+          or
+        </Typography>
+        <Divider sx={{ flexGrow: 1, backgroundColor: "#FFECEC" }} />
+      </Stack>
 
             {/* Step 3: Add Google and Facebook login buttons */}
-            <Stack width={isSmall ? "80%" : "70%"} spacing={2} marginBottom="20px">
+            <Stack width={isSmall ? "80%" : "70%"} spacing={2} marginBottom="20px" sx={{backgroundColor:"#FFECEC"}}>
             <Button
               variant="outlined"
               startIcon={<img src={googleIcon} alt="Google Icon" width={"20px"} height={"20px"}/>}
@@ -264,7 +268,7 @@ export default function Login() {
 
       {/* Stack for the signup link */}
       <Stack direction="row" alignItems="center" width={"100%"} justifyContent="center" marginTop={"2px"} sx={{backgroundColor:"#FFECEC"}}>
-        <Typography fontSize={"14px"} color="#000000" marginRight={"5px"} >
+        <Typography fontSize={"14px"} color="#000000" marginRight={"5px"} sx={{backgroundColor:"#FFECEC"}} >
           Don't have an account?
         </Typography>
         <Typography
@@ -274,7 +278,8 @@ export default function Login() {
             cursor: "pointer",
             color: "blue",
             textDecoration: "underline",
-            ":hover": { color: "darkblue" }
+            ":hover": { color: "darkblue" },
+            backgroundColor:"#FFECEC"
           }}
         >
           Sign up
