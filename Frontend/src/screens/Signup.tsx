@@ -9,11 +9,40 @@ import TravelGram from "../assets/TravelGram.jpg";
 export default function Signup() {
   const navigate = useNavigate();
 
-  const [credentials, setCredentials] = useState({ username: "", mobile: "", fullName: "", email: "", password: "" });
+  const [credentials, setCredentials] = useState({ username: "null", mobile: "null", fullName: "null", email: "null", password: "null" });
   const [mobileOrEmail, setMobileOrEmail] = useState(""); // Track the input separately
+  const [errors, setErrors] = useState({username: "", password: ""});
+
+
+  const isValidUsername = (username: string) => {
+    if (username.trim() === "") {
+      setErrors(prevErrors => ({ ...prevErrors, username: "Username is required"}));
+      return false;
+    }
+    return true;
+  };
+
+
+  const isValidPassword = (password: string) => {
+    //password should be at least 8 characters long
+    if (password.length < 8) {
+      setErrors(prevErrors => ({ ...prevErrors, password: "Password should be at least 8 characters long"}));
+      return false;
+    }
+    return true;
+  }
+    
+    
+  
 
   const handleSignup = async (e: any) => {
     e.preventDefault();
+
+    setErrors({username: "", password: ""});
+
+    if(!isValidUsername(credentials.username) || !isValidPassword(credentials.password)) {
+      return;
+    }
 
     const response = await fetch("http://localhost:4000/api/v1/users/register", {
       method: "POST",
@@ -30,6 +59,11 @@ export default function Signup() {
       }),
     });
 
+    if (!response.ok) {
+      const data = await response.json();
+      setErrors(data.errors);
+    }
+
     const result = await response.json();
     console.log(result);
 
@@ -44,9 +78,9 @@ export default function Signup() {
   // Updated setSelectedFields to handle input properly
   const setSelectedFields = (input: string) => {
     if (input.includes("@")) {
-      setCredentials({ ...credentials, email: input, mobile: "" });
+      setCredentials({ ...credentials, email: input, mobile: "null" });
     } else if (input.length === 10 && !input.includes("@")) {
-      setCredentials({ ...credentials, mobile: input, email: "" });
+      setCredentials({ ...credentials, mobile: input, email: "null" });
     }
   };
 
