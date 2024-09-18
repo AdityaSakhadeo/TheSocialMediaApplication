@@ -25,26 +25,51 @@ const genrateAccessAndRefreshTokens = async (userId) => {
 export const registerUser = asyncHandler(async (req, res) => {
   const { username, email, phoneNumber, fullName, password } = req.body;
 
-  //Checking if all the fields are received or not
-  if (
-    [username, email, phoneNumber, fullName, password].some(
-      (field) => field?.trim() === ""
-    )
-  ) {
+  // Ensure either email or phone number is provided
+  if (!email && !phoneNumber) {
+    throw new ApiError(400, "Please enter either phone number or email address");
+  }
+
+  // Sanitize inputs (make sure null values are handled correctly)
+  const sanitizedEmail = email?.trim() === "" ? null : email?.trim();
+  const sanitizedPhone = phoneNumber?.trim() === "" ? null : phoneNumber?.trim();
+
+  // Validate other required fields
+  if ([username, fullName, password].some((field) => field?.trim() === "")) {
     throw new ApiError(400, "Please fill all the fields");
   }
 
-  //Add more validations here if necessary
+  // Check if the username, email, or phone number already exists
+  const existedUser = await User.findOne({ username: username.toLowerCase() });
+  const existedUserEmail = sanitizedEmail ? await User.findOne({ email: sanitizedEmail }) : null;
+  const existedUserPhoneNumber = sanitizedPhone ? await User.findOne({ phoneNumber: sanitizedPhone }) : null;
 
-  //Now check if the user is already there or not by checking if username or email is already there
-  const existedUser = await User.findOne({
-    $or: [{ username }, { email }], //to be changed when once used
-  });
+  if (existedUser) {
+    throw new ApiError(409, "The user with this username already exists");
+  }
+  if (existedUserEmail) {
+    throw new ApiError(409, "The user with this email already exists");
+  }
+  if (existedUserPhoneNumber) {
+    throw new ApiError(409, "The user with this phone number already exists");
+  }
 
   if (existedUser) {
     throw new ApiError(
       409,
-      "The user with this username or email already exists"
+      "The user with this username already exists"
+    );
+  }
+  if (existedUserEmail) {
+    throw new ApiError(
+      409,
+      "The user with this email already exists"
+    );
+  }
+  if (existedUserPhoneNumber) {
+    throw new ApiError(
+      409,
+      "The user with this phone number exists"
     );
   }
 
@@ -58,38 +83,51 @@ export const registerUser = asyncHandler(async (req, res) => {
   // const profilePhoto = await uploadOnCloudinary(profilePhotoPath);
   //This will return the URL of the profile photo
 
-  const user = await User.create({
-    username: username.toLowerCase(),
-    email,
-    password,
-    fullName,
-    phoneNumber,
-    profilePhoto: "",
-  });
-
-  const createdUser = await User.findById(user._id).select(
-    "-password -refereshToken"
-  );
-
-  if (!createdUser) {
-    throw new ApiError(500, "Something went wrong while registering the user");
+  try {
+    const user = await User.create({
+      username: username.toLowerCase(),
+      email: sanitizedEmail, // Store null if email is not provided
+      password,
+      fullName,
+      phoneNumber: sanitizedPhone, // Store null if phone number is not provided
+      profilePhoto: "",
+    });
+  
+    const createdUser = await User.findById(user._id).select(
+      "-password -refereshToken"
+    );
+  
+    if (!createdUser) {
+      throw new ApiError(500, "Something went wrong while registering the user");
+    }
+  
+    return res
+      .status(201)
+      .json(
+        new ApiResponse(200, createdUser, "User created registered successfully")
+      );
+  } catch (error) {
+    if (error.name==="ValidationError") {
+      const messages = Object.values(error.errors).map((err) => err.message);
+      return res
+      .status(400)
+      .json(
+        new ApiResponse(400,'',messages)
+      )
+    }
+    throw new ApiError(500,"Server Error");
   }
 
-  return res
-    .status(201)
-    .json(
-      new ApiResponse(200, createdUser, "User created registered successfully")
-    );
 });
 
 export const loginUser = asyncHandler(async (req, res) => {
-  const { username, email, phoneNumber, password } = req.body;
+  const {input,logintype, password } = req.body;
 
   // Check if both fields are provided
-  if (!(email || password || username || phoneNumber)) {
+  if (!(input || logintype || password)) {
     throw new ApiError(
       400,
-      "Please provide both username or email and password"
+      "Please provide correct input and password"
     );
   }
 
@@ -98,10 +136,23 @@ export const loginUser = asyncHandler(async (req, res) => {
   // const user = username == 'null' ? await User.findOne({ email }).select("+password") : await User.findOne({ username }).select('+password');
 
   //method 2:
-  const user = await User.findOne({
-    $or: [{ username }, { email }, { phoneNumber }],
-  });
+  console.log("Input",input);
+  console.log("logintype",logintype);
+  console.log("password",password);
+  let user = null;
+  try {
+    if (logintype === 'email') {
+      user = await User.findOne({ email: input });
+    } else if (logintype === 'phoneNumber') {
+      user = await User.findOne({ phoneNumber: input });
+    } else {
+      user = await User.findOne({ username: input });
+    }
+  } catch (error) {
+    throw new ApiError(500, "An error occurred while fetching the user");
+  }
 
+  console.log("User::: ",user);
   if (!user) {
     throw new ApiError(404, "User not found with this username or email");
   }
