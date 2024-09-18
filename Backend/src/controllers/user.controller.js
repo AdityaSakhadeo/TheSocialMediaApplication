@@ -121,13 +121,13 @@ export const registerUser = asyncHandler(async (req, res) => {
 });
 
 export const loginUser = asyncHandler(async (req, res) => {
-  const { username, email, phoneNumber, password } = req.body;
+  const {input,logintype, password } = req.body;
 
   // Check if both fields are provided
-  if (!(email || password || username || phoneNumber)) {
+  if (!(input || logintype || password)) {
     throw new ApiError(
       400,
-      "Please provide both username or email and password"
+      "Please provide correct input and password"
     );
   }
 
@@ -136,10 +136,23 @@ export const loginUser = asyncHandler(async (req, res) => {
   // const user = username == 'null' ? await User.findOne({ email }).select("+password") : await User.findOne({ username }).select('+password');
 
   //method 2:
-  const user = await User.findOne({
-    $or: [{ username }, { email }, { phoneNumber }],
-  });
+  console.log("Input",input);
+  console.log("logintype",logintype);
+  console.log("password",password);
+  let user = null;
+  try {
+    if (logintype === 'email') {
+      user = await User.findOne({ email: input });
+    } else if (logintype === 'phoneNumber') {
+      user = await User.findOne({ phoneNumber: input });
+    } else {
+      user = await User.findOne({ username: input });
+    }
+  } catch (error) {
+    throw new ApiError(500, "An error occurred while fetching the user");
+  }
 
+  console.log("User::: ",user);
   if (!user) {
     throw new ApiError(404, "User not found with this username or email");
   }
