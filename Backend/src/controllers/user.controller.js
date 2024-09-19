@@ -1,30 +1,76 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/APIError.js";
 import { User } from "../models/userModel.js";
-import {uploadOnCloudinary} from '../utils/cloudinary.js'
+import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/APIResponse.js";
+
+const genrateAccessAndRefreshTokens = async (userId) => {
+  try {
+    const user = await User.findById(userId);
+    const accessToken = user.genrateAccessToken();
+    const refreshToken = user.genrateRefreshToken();
+
+    user.refreshToken = refreshToken;
+    await user.save({ validateBeforeSave: false });
+    return { accessToken, refreshToken };
+
+  } catch (error) {
+    throw new ApiError(
+      500,
+      "Something went wrong while genrating the access and refresh token"
+    );
+  }
+};
 
 export const registerUser = asyncHandler(async (req, res) => {
   const { username, email, phoneNumber, fullName, password } = req.body;
 
-  //Checking if all the fields are received or not
-  if (
-    [username, email, phoneNumber, fullName, password].some(
-      (field) => field?.trim() === ""
-    )
-  ) {
+  // Ensure either email or phone number is provided
+  if (!email && !phoneNumber) {
+    throw new ApiError(400, "Please enter either phone number or email address");
+  }
+
+  // Sanitize inputs (make sure null values are handled correctly)
+  const sanitizedEmail = email?.trim() === "" ? null : email?.trim();
+  const sanitizedPhone = phoneNumber?.trim() === "" ? null : phoneNumber?.trim();
+
+  // Validate other required fields
+  if ([username, fullName, password].some((field) => field?.trim() === "")) {
     throw new ApiError(400, "Please fill all the fields");
   }
 
-  //Add more validations here if necessary
-
-  //Now check if the user is already there or not by checking if username or email is already there
-  const existedUser= await User.findOne({
-    $or: [{ username }, { email }],  //to be changed when once used
-  });
+  // Check if the username, email, or phone number already exists
+  const existedUser = await User.findOne({ username: username.toLowerCase() });
+  const existedUserEmail = sanitizedEmail ? await User.findOne({ email: sanitizedEmail }) : null;
+  const existedUserPhoneNumber = sanitizedPhone ? await User.findOne({ phoneNumber: sanitizedPhone }) : null;
 
   if (existedUser) {
-    throw new ApiError(409,"The user with this username or email already exists")
+    throw new ApiError(409, "The user with this username already exists");
+  }
+  if (existedUserEmail) {
+    throw new ApiError(409, "The user with this email already exists");
+  }
+  if (existedUserPhoneNumber) {
+    throw new ApiError(409, "The user with this phone number already exists");
+  }
+
+  if (existedUser) {
+    throw new ApiError(
+      409,
+      "The user with this username already exists"
+    );
+  }
+  if (existedUserEmail) {
+    throw new ApiError(
+      409,
+      "The user with this email already exists"
+    );
+  }
+  if (existedUserPhoneNumber) {
+    throw new ApiError(
+      409,
+      "The user with this phone number exists"
+    );
   }
 
   //Dealing the with the image uploading
@@ -37,60 +83,130 @@ export const registerUser = asyncHandler(async (req, res) => {
   // const profilePhoto = await uploadOnCloudinary(profilePhotoPath);
   //This will return the URL of the profile photo
 
-
-  const user = await User.create({
-    username:username.toLowerCase(),
-    email,
-    password,
-    fullName,
-    phoneNumber,
-    profilePhoto: ""
-  })
-
-  const createdUser = await User.findById(user._id).select(
-    "-password -refereshToken"
-  );
-
-  if (!createdUser) {
-    throw new ApiError(500,"Something went wrong while registering the user");
+  try {
+    const user = await User.create({
+      username: username.toLowerCase(),
+      email: sanitizedEmail, // Store null if email is not provided
+      password,
+      fullName,
+      phoneNumber: sanitizedPhone, // Store null if phone number is not provided
+      profilePhoto: "",
+    });
+  
+    const createdUser = await User.findById(user._id).select(
+      "-password -refereshToken"
+    );
+  
+    if (!createdUser) {
+      throw new ApiError(500, "Something went wrong while registering the user");
+    }
+  
+    return res
+      .status(201)
+      .json(
+        new ApiResponse(200, createdUser, "User created registered successfully")
+      );
+  } catch (error) {
+    if (error.name==="ValidationError") {
+      const messages = Object.values(error.errors).map((err) => err.message);
+      return res
+      .status(400)
+      .json(
+        new ApiResponse(400,'',messages)
+      )
+    }
+    throw new ApiError(500,"Server Error");
   }
 
-  return res.status(201).json(
-    new ApiResponse(200,createdUser,"User created registered successfully")
-  )
-
-  
 });
 
 export const loginUser = asyncHandler(async (req, res) => {
-  const { email, password } = req.body;
+  const {input,logintype, password } = req.body;
 
   // Check if both fields are provided
-  if (!email || !password) {
-    throw new ApiError(400, "Please provide both email and password");
+  if (!(input || logintype || password)) {
+    throw new ApiError(
+      400,
+      "Please provide correct input and password"
+    );
   }
 
-  // Find the user by email
-  const user = await User.findOne({ email }).select("+password");
+  // Find the user by email or username
+  //method 1:
+  // const user = username == 'null' ? await User.findOne({ email }).select("+password") : await User.findOne({ username }).select('+password');
+
+  //method 2:
+  console.log("Input",input);
+  console.log("logintype",logintype);
+  console.log("password",password);
+  let user = null;
+  try {
+    if (logintype === 'email') {
+      user = await User.findOne({ email: input });
+    } else if (logintype === 'phoneNumber') {
+      user = await User.findOne({ phoneNumber: input });
+    } else {
+      user = await User.findOne({ username: input });
+    }
+  } catch (error) {
+    throw new ApiError(500, "An error occurred while fetching the user");
+  }
+
+  console.log("User::: ",user);
   if (!user) {
-    throw new ApiError(404, "User not found with this email");
+    throw new ApiError(404, "User not found with this username or email");
   }
 
   // Compare the provided password with the stored hashed password
-  const isPasswordMatch = await bcrypt.compare(password, user.password);
+  const isPasswordMatch = await user.isPasswordCorrect(password);
+
   if (!isPasswordMatch) {
     throw new ApiError(401, "Invalid credentials");
   }
 
-  // Create JWT token (valid for 1 hour)
-  const token = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: "1h" });
+  //Dealing with the tokens
+  const { accessToken, refreshToken } = await genrateAccessAndRefreshTokens(user._id);
 
-  // Remove sensitive fields before sending user data
-  const userData = await User.findById(user._id).select("-password -refreshToken");
+  //sending the cookies
+  const loggedInUser = await User.findById(user._id).select(
+    '-password -refreshToken'
+  );  //Getting the user details with the refresh token genrated in the function above
 
-  // Respond with the user data and token
-  res.status(200).json(
-    new ApiResponse(200, { user: userData, token }, "Login successful")
-  );
+  const options = {
+    httpOnly: true,
+    secure: true
+  }
+
+  return res
+    .status(200)
+    .cookie("accessToken", accessToken, options)
+    .cookie("refreshToken", refreshToken, options)
+    .json(
+      new ApiResponse(200, { user: loggedInUser, refreshToken, accessToken }, "Login Successful")
+    )
 });
 
+export const logoutUser = asyncHandler(async (req, res) => {
+  await User.findByIdAndUpdate(
+    req.user._id,
+    {
+      $unset: {
+        refreshToken: 1
+      }
+    },
+    {
+      new: true
+    }
+  )
+
+  const options = {
+    httpOnly: true,
+    secure: true
+  }
+
+  return res
+    .status(200)
+    .clearCookie("accessToken", options)
+    .clearCookie("refreshToken", options)
+    .json(new ApiResponse(200, {}, "User logged out"))
+})

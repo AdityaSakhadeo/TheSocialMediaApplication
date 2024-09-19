@@ -1,37 +1,60 @@
-import {useState, useEffect} from 'react';
-import {TextField, Button} from '@mui/material';
-import axios from 'axios';
+import { Button, Stack, Typography } from '@mui/material';
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import defaultProfileImage from '../assets/defaultProfileImage.png';
 
-interface Destination {
-    id: number;
-    name: string;
-    city: string;
-}
 
 export default function Home() {
-    const [destinations, setDestinations] = useState<Destination[]>([]);
+  const navigate = useNavigate();
+  const userData = JSON.parse(localStorage.getItem("userInformation") || '{}');
 
-    // useEffect(() => {
-    //     axios.get('/api/destinations')
-    //     .then((response) => {
-    //         console.log("Response::", response);
-    //         setDestinations(response.data);
-    //     }).catch((err) => {
-    //         console.log(err);
-    //     });
-    // }, [])
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/");
+    }
+      console.log("successfully logged in");
 
-    return (
-        <>
-        <h1>There are {destinations.length} destinations available</h1>
-        {
-            destinations.map((destination) => (
-                <div key={destination.id}>
-                    <h2>{destination.name}</h2>
-                    <p>City: {destination.city}</p>
-                </div>
-            ))
-        }
-        </>
-    )
+  }, [navigate]);
+console.log(userData);
+  return (
+    <Stack width={"100vw"} height={"100vh"} direction={"row"}>
+      <Stack sx={{ position: 'absolute', top: 16, right: 16 }}>
+      <Button
+        onClick={() => navigate('/profile')}
+        sx={{
+          width: 50,
+          height: 50,
+          borderRadius: '50%',
+          padding: 0,
+          minWidth: 0,
+          border: "1px solid #000000",
+          ":hover": {
+          backgroundColor: "#f0f0f0",
+          transition: "0.3s",
+          cursor: "pointer",
+          boxShadow: "0 0 10px 3px rgba(0, 0, 0, 0.2)"
+            },
+            ":focus": {
+          boxShadow: "0 0 10px 3px rgba(0, 0, 0, 0.4)"
+            }
+          }}
+          disableRipple
+      >
+        <img
+          src={userData?.profilePhoto || defaultProfileImage}
+          alt="Profile"
+          style={{
+        width: '100%',
+        height: '100%',
+        borderRadius: '50%',
+        backgroundColor: 'white',
+        objectFit: 'cover',
+        objectPosition: 'center',
+          }}
+        />
+      </Button>
+      </Stack>
+    </Stack>
+  );
 }
