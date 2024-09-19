@@ -69,7 +69,7 @@ export default function Signup() {
     if (result.success) {
       dispatch(setLoading(false));
       alert("User Created successfully, now you can log in---->")
-      navigate("/home");
+      navigate("/login");
     } else {
       if (result.statusCode==400) {
         dispatch(setLoading(false));
