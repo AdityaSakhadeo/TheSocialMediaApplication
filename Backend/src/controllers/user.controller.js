@@ -90,7 +90,7 @@ export const registerUser = asyncHandler(async (req, res) => {
       password,
       fullName,
       phoneNumber: sanitizedPhone, // Store null if phone number is not provided
-      profilePhoto: "",
+      profileImage: "",
     });
   
     const createdUser = await User.findById(user._id).select(
@@ -209,4 +209,34 @@ export const logoutUser = asyncHandler(async (req, res) => {
     .clearCookie("accessToken", options)
     .clearCookie("refreshToken", options)
     .json(new ApiResponse(200, {}, "User logged out"))
+})
+
+
+//Function to upload the photo on cloudinary
+export const uploadProfileImage = asyncHandler(async (req, res) => {
+try {
+    const {user_id} = req.body;
+    const profileImagePath = req.files?.avatar[0]?.path;
+    if (!profileImagePath) {
+      return new ApiResponse(400,null,"Image source not received");
+    }
+    const profileImage = uploadOnCloudinary(profileImagePath);
+  
+    if (!profileImage) {
+      return new ApiResponse(400,null,"Image source not received");
+    }
+  
+    const user = User.findById(user_id);
+    if (!user) {
+      return new ApiResponse(404, null, "User not found");
+      }
+      user.profileImage = profileImage;
+      await user.save({ validateBeforeSave: false });
+} catch (error) {
+  throw new ApiError(
+    500,
+    "Error while uploading profile image",
+  )
+}
+
 })

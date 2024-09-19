@@ -42,7 +42,7 @@ console.log(userData);
           disableRipple
       >
         <img
-          src={userData?.profilePhoto || defaultProfileImage}
+          src={userData?.profileImage || defaultProfileImage}
           alt="Profile"
           style={{
         width: '100%',
