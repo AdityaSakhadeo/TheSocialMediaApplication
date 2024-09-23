@@ -232,6 +232,7 @@ try {
       }
       user.profileImage = profileImage;
       await user.save({ validateBeforeSave: false });
+      return res.status(200).json(new ApiResponse(200, user, "Profile image uploaded successfully"));
 } catch (error) {
   throw new ApiError(
     500,
