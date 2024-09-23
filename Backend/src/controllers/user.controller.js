@@ -275,36 +275,29 @@ export const getUserProfile = asyncHandler(async(req,res)=>{
  * @access : Private
  */
 
-export const follow = asyncHandler(async (req,res)=>{
-  const {currentUserId,targetUserId} = req.body;
+export const followUser = asyncHandler(async (req, res) => {
+  const { currentUserId, targetUserId } = req.body;
   
-  const targetUser = User.findById(targetUserId).select('-password -refreshToken');
-  const currentUser = User.findById(currentUserId).select('-password -refreshToken');
+  const targetUser = await User.findById(targetUserId);
+  const currentUser = await User.findById(currentUserId);
 
   if (!targetUser) {
-    return new ApiResponse(404,null,"User not found");
+    return res.status(404).json(new ApiResponse(404, null, "User not found"));
   }
 
   if (targetUserId.toString() === currentUserId.toString()) {
-    return res
-    .status(400)
-    .json(new ApiResponse(400,null,"You can not follow yourself!!!"))
+    return res.status(400).json(new ApiResponse(400, null, "You cannot follow yourself!"));
   }
 
   if (targetUser.followers.includes(currentUserId)) {
-    return res
-    .status(400)
-    .json(new ApiResponse(400,null,"You are already following the user"));
+    return res.status(400).json(new ApiResponse(400, null, "You are already following the user"));
   }
 
   targetUser.followers.push(currentUserId);
   currentUser.followedPeople.push(targetUserId);
 
-  await currentUser.save({validateBeforeSave:false});
-  await targetUser.save({validateBeforeSave:false});
+  await currentUser.save({ validateBeforeSave: false });
+  await targetUser.save({ validateBeforeSave: false });
 
-  return res
-  .status(200)
-  .json(new ApiResponse(200,null,"User followed sucessfully"))
-
-})
+  return res.status(200).json(new ApiResponse(200, null, "User followed successfully"));
+});
