@@ -260,8 +260,10 @@ export const getUserProfile = asyncHandler(async(req,res)=>{
   if (!user) {
     return res 
     .status(404)
-    .json(new ApiResponse(400,null,"User with this username not found!!"));
+    .json(new ApiResponse(404,null,"User with this username not found!!"));
   }
+
+
   return res
   .status(200)
   .json(new ApiResponse(200,user,"User profile retrived successfully"));
@@ -277,12 +279,25 @@ export const follow = asyncHandler((req,res)=>{
   const {currentUserId,targetUserId} = req.body;
   
   const targetUser = User.findById(targetUserId).select('-password -refreshToken');
-
+  const currentUser = User.findById(currentUserId).select('-password -refreshToken');
+  
   if (!targetUser) {
     return new ApiResponse(404,null,"User not found");
   }
 
-  if (targetUserId) {
-    
+  if (targetUserId.toString() === currentUserId.toString()) {
+    return res
+    .status(400)
+    .json(new ApiResponse(400,null,"You can not follow yourself!!!"))
   }
+
+  if (targetUser.followers.includes(currentUserId)) {
+    return res
+    .status(400)
+    .json(new ApiResponse(400,null,"You are already following the user"));
+  }
+
+  targetUser.followers.push(currentUserId);
+
+
 })
