@@ -255,10 +255,11 @@ export const getUserProfile = asyncHandler(async(req,res)=>{
 
   const user = await User.findOne({ username: username.toLowerCase() })
   .select("-password -refreshToken")
-  .populate("followers", "username fullName profileImage")
-  .populate("followedPeople", "username fullName profileImage");
 
   if (!user) {
-    return new ApiResponse(400,null,"User with this username not found!!")
+    return json(new ApiResponse(400,null,"User with this username not found!!"));
   }
+  return res
+  .status(200)
+  .json(new ApiResponse(200,user,"User profile retrived successfully"));
 })

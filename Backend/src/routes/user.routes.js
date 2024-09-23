@@ -1,5 +1,5 @@
 import { Router } from "express";
-import {registerUser,loginUser,logoutUser, uploadProfileImage} from "../controllers/user.controller.js";
+import {registerUser,loginUser,logoutUser, uploadProfileImage, getUserProfile} from "../controllers/user.controller.js";
 import { upload } from "../Middleware/multer.middleware.js";
 import { verifyJWT } from "../Middleware/auth.middleware.js";
 const router = Router();
@@ -23,6 +23,6 @@ router.route("/uploadProfileImage").post(
     ]),
     uploadProfileImage
 )
-router.route("/getUserProfile")
+router.route("/getUserProfile").get(getUserProfile);
 
 export default router;
