@@ -3,6 +3,7 @@ import { ApiError } from "../utils/APIError.js";
 import { User } from "../models/userModel.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/APIResponse.js";
+import { json } from "express";
 
 const genrateAccessAndRefreshTokens = async (userId) => {
   try {
@@ -257,7 +258,9 @@ export const getUserProfile = asyncHandler(async(req,res)=>{
   .select("-password -refreshToken")
 
   if (!user) {
-    return json(new ApiResponse(400,null,"User with this username not found!!"));
+    return res 
+    .status(404)
+    .json(new ApiResponse(400,null,"User with this username not found!!"));
   }
   return res
   .status(200)
@@ -272,4 +275,14 @@ export const getUserProfile = asyncHandler(async(req,res)=>{
 
 export const follow = asyncHandler((req,res)=>{
   const {currentUserId,targetUserId} = req.body;
+  
+  const targetUser = User.findById(targetUserId).select('-password -refreshToken');
+
+  if (!targetUser) {
+    return new ApiResponse(404,null,"User not found");
+  }
+
+  if (targetUserId) {
+    
+  }
 })
