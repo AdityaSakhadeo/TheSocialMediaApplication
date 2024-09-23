@@ -263,3 +263,13 @@ export const getUserProfile = asyncHandler(async(req,res)=>{
   .status(200)
   .json(new ApiResponse(200,user,"User profile retrived successfully"));
 })
+
+/**
+ * @description : Control flow used for following the user
+ * @route : /api/v1/users/follow
+ * @access : Private
+ */
+
+export const follow = asyncHandler((req,res)=>{
+  const {currentUserId,targetUserId} = req.body;
+})
