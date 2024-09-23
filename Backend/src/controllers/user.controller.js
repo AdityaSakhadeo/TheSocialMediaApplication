@@ -275,12 +275,12 @@ export const getUserProfile = asyncHandler(async(req,res)=>{
  * @access : Private
  */
 
-export const follow = asyncHandler((req,res)=>{
+export const follow = asyncHandler(async (req,res)=>{
   const {currentUserId,targetUserId} = req.body;
   
   const targetUser = User.findById(targetUserId).select('-password -refreshToken');
   const currentUser = User.findById(currentUserId).select('-password -refreshToken');
-  
+
   if (!targetUser) {
     return new ApiResponse(404,null,"User not found");
   }
@@ -298,6 +298,13 @@ export const follow = asyncHandler((req,res)=>{
   }
 
   targetUser.followers.push(currentUserId);
+  currentUser.followedPeople.push(targetUserId);
 
+  await currentUser.save({validateBeforeSave:false});
+  await targetUser.save({validateBeforeSave:false});
+
+  return res
+  .status(200)
+  .json(new ApiResponse(200,null,"User followed sucessfully"))
 
 })
