@@ -23,5 +23,6 @@ router.route("/uploadProfileImage").post(
     ]),
     uploadProfileImage
 )
+router.route("/getUserProfile")
 
 export default router;
