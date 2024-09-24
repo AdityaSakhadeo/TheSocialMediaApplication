@@ -58,12 +58,18 @@ export default function Login() {
 
   const [credentials, setCredentials] = useState({ input: "",logintype:"",password:"" });
   const [passwordError, setPasswordError] = useState(false);
+  const [errors, setErrors] = useState({ input: false, password: false });
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);  // New state for displaying error messages
 
 
   const handleLogin = async (e: any) => {
        e.preventDefault();
        dispatch(setLoading(true));
        setPasswordError(false);
+           // Reset error states
+    setErrors({ input: false, password: false });
+    setErrorMessage(null);
+
        if (credentials.input.includes('@')) {
         credentials.logintype="email";
        }
@@ -95,11 +101,13 @@ export default function Login() {
         navigate("/home");
       } else {
         setPasswordError(true);
-        alert("Invalid credentials");
+        setErrors({ input: true, password: true });
+        setErrorMessage("Invalid credentials. Please try again.");
       }
     } catch (error) {
       console.error("There was a problem with the fetch operation:", error);
-      alert("An error occurred. Please try again.");
+      setErrorMessage("An error occurred. Please try again.");
+      setErrors({ input: true, password: true });
       dispatch(setLoading(false));
     } finally {
       dispatch(setLoading(false));
@@ -198,6 +206,8 @@ export default function Login() {
           type={checkType(credentials.input) ? "email" : "username"}
           onChange={handleChange}
           fullWidth
+          error={errors.input}
+          helperText={errors.input && errorMessage}
           sx={{backgroundColor:"#FFECEC"}}
         />
       </Stack>
@@ -211,6 +221,8 @@ export default function Login() {
           type="password"
           onChange={handleChange}
           fullWidth
+          error={errors.password}
+          helperText={errors.input && errorMessage}
           sx={{backgroundColor:"#FFECEC"}}
         />
       </Stack>
