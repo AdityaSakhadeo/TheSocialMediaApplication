@@ -5,6 +5,13 @@ import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/APIResponse.js";
 import { json } from "express";
 
+
+/**
+ * @description : Function to genrate the access and refresh token
+ * @route : integrated function
+ * @access : Private
+ */
+
 const genrateAccessAndRefreshTokens = async (userId) => {
   try {
     const user = await User.findById(userId);
@@ -21,6 +28,12 @@ const genrateAccessAndRefreshTokens = async (userId) => {
     );
   }
 };
+
+/**
+ * @description : Function to register the user
+ * @route : /api/v1/users/register
+ * @access : Public
+ */
 
 export const registerUser = asyncHandler(async (req, res) => {
   const { username, email, phoneNumber, fullName, password } = req.body;
@@ -121,6 +134,13 @@ export const registerUser = asyncHandler(async (req, res) => {
   }
 });
 
+
+/**
+ * @description : Function to login the user
+ * @route : /api/v1/users/login
+ * @access : Public
+ */
+
 export const loginUser = asyncHandler(async (req, res) => {
   const { input, logintype, password } = req.body;
 
@@ -190,6 +210,13 @@ export const loginUser = asyncHandler(async (req, res) => {
     );
 });
 
+
+/**
+ * @description : Function to logout the user
+ * @route : /api/v1/users/logout
+ * @access : Private
+ */
+
 export const logoutUser = asyncHandler(async (req, res) => {
   await User.findByIdAndUpdate(
     req.user._id,
@@ -215,7 +242,13 @@ export const logoutUser = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, {}, "User logged out"));
 });
 
-//Function to upload the photo on cloudinary
+
+/**
+ * @description : Function to upload the media to cloudinary
+ * @route : /api/v1/users/uploadProfileImage
+ * @access : Private
+ */
+
 export const uploadProfileImage = asyncHandler(async (req, res) => {
   try {
     const { user_id } = req.body;
@@ -250,23 +283,23 @@ export const uploadProfileImage = asyncHandler(async (req, res) => {
  * @access : Public
  */
 
-export const getUserProfile = asyncHandler(async(req,res)=>{
-  
-  const {username} = req.body;
+export const getUserProfile = asyncHandler(async (req, res) => {
+
+  const { username } = req.body;
 
   const user = await User.findOne({ username: username.toLowerCase() })
-  .select("-password -refreshToken")
+    .select("-password -refreshToken")
 
   if (!user) {
-    return res 
-    .status(404)
-    .json(new ApiResponse(404,null,"User with this username not found!!"));
+    return res
+      .status(404)
+      .json(new ApiResponse(404, null, "User with this username not found!!"));
   }
 
 
   return res
-  .status(200)
-  .json(new ApiResponse(200,user,"User profile retrived successfully"));
+    .status(200)
+    .json(new ApiResponse(200, user, "User profile retrived successfully"));
 })
 
 /**
@@ -277,20 +310,26 @@ export const getUserProfile = asyncHandler(async(req,res)=>{
 
 export const followUser = asyncHandler(async (req, res) => {
   const { currentUserId, targetUserId } = req.body;
-  
+
   const targetUser = await User.findById(targetUserId);
   const currentUser = await User.findById(currentUserId);
 
   if (!targetUser) {
-    return res.status(404).json(new ApiResponse(404, null, "User not found"));
+    return res
+      .status(404)
+      .json(new ApiResponse(404, null, "User not found"));
   }
 
   if (targetUserId.toString() === currentUserId.toString()) {
-    return res.status(400).json(new ApiResponse(400, null, "You cannot follow yourself!"));
+    return res
+      .status(400)
+      .json(new ApiResponse(400, null, "You cannot follow yourself!"));
   }
 
   if (targetUser.followers.includes(currentUserId)) {
-    return res.status(400).json(new ApiResponse(400, null, "You are already following the user"));
+    return res
+      .status(400)
+      .json(new ApiResponse(400, null, "You are already following the user"));
   }
 
   targetUser.followers.push(currentUserId);
