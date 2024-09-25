@@ -106,7 +106,7 @@ export default function Login() {
       }
     } catch (error) {
       console.error("There was a problem with the fetch operation:", error);
-      setErrorMessage("An error occurred. Please try again.");
+      setErrorMessage("Invalid credentials. Please try again.");
       setErrors({ input: true, password: true });
       dispatch(setLoading(false));
     } finally {
@@ -198,7 +198,7 @@ export default function Login() {
       </Typography>
 
       {/* Stack for the Email Input */}
-      <Stack width={"70%"} height={"auto"} marginBottom={"20px"} >
+      <Stack width={"70%"} height={"auto"} marginBottom={"20px"} sx={{backgroundColor:"#ffecec"}} >
         <TextField
           name="input"
           variant="standard"
@@ -213,7 +213,7 @@ export default function Login() {
       </Stack>
 
       {/* Stack for password */}
-      <Stack width={"70%"} height={"auto"} marginBottom={"20px"}>
+      <Stack width={"70%"} height={"auto"} marginBottom={"20px"} sx={{backgroundColor:"#ffecec"}}>
         <TextField
           name="password"
           variant="standard"
