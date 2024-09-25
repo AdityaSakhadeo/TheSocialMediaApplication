@@ -367,6 +367,7 @@ export const suggestRelevantUsers = asyncHandler(async (req, res) => {
     suggestedUsers = await User.aggregate([
       { $match: { _id: { $nin: [...followedPeopleIds, currentUserId] } } },
       { $sample: { size: 5 } },
+      { $project: { password: 0, refreshToken: 0 } },
     ]);
   }
 
