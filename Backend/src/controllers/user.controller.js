@@ -340,3 +340,37 @@ export const followUser = asyncHandler(async (req, res) => {
 
   return res.status(200).json(new ApiResponse(200, null, "User followed successfully"));
 });
+
+/**
+ * @description : Function to get the data of the suggested users
+ * @route : /api/v1/users/getUserSuggestion
+ * @access : Private
+ */
+
+export const suggestRelevantUsers = asyncHandler(async (req, res) => {
+  const { currentUserId } = req.body;
+
+  const currentUser = await User.findById(currentUserId).select('-password -refreshToken');
+
+  if (!currentUser) {
+    return res.status(404).json(new ApiResponse(404, null, "User not found"));
+  }
+
+  const followedPeopleIds = currentUser.followedPeople.map(user => user._id);
+
+  let suggestedUsers = await User.find({
+    _id: { $nin: [...followedPeopleIds, currentUserId] },
+    followers: { $in: followedPeopleIds },
+  }).limit(10);
+
+  if (suggestedUsers.length === 0) {
+    suggestedUsers = await User.aggregate([
+      { $match: { _id: { $nin: [...followedPeopleIds, currentUserId] } } },
+      { $sample: { size: 5 } },
+    ]);
+  }
+
+  return res.status(200).json(new ApiResponse(200, suggestedUsers, "Relevant users suggested successfully"));
+});
+
+
