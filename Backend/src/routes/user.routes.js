@@ -1,5 +1,5 @@
 import { Router } from "express";
-import {registerUser,loginUser,logoutUser, uploadProfileImage, getUserProfile, followUser} from "../controllers/user.controller.js";
+import {registerUser,loginUser,logoutUser, uploadProfileImage, getUserProfile, followUser, suggestRelevantUsers} from "../controllers/user.controller.js";
 import { upload } from "../Middleware/multer.middleware.js";
 import { verifyJWT } from "../Middleware/auth.middleware.js";
 const router = Router();
@@ -25,5 +25,6 @@ router.route("/uploadProfileImage").post(
 )
 router.route("/getUserProfile").get(getUserProfile);
 router.route("/follow").post(followUser);
+router.route("/getUserSuggestion").get(suggestRelevantUsers)
 
 export default router;
