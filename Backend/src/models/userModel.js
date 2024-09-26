@@ -77,7 +77,7 @@ const userSchema = new Schema(
         "One or more associated posts do not exist",
       ],
     },
-    profilePhoto: {
+    profileImage: {
       type: String,
       default: "default.jpg",
     },
