@@ -310,19 +310,15 @@ export const updateProfile = asyncHandler(async (req, res) => {
         .json(new ApiResponse(200, null, "Full Name updated successfully"));
 
     case "profilePhoto":
-      if (!newData) {
-        return res
-          .status(400)
-          .json(new ApiResponse(400, null, "Image URL not received"));
-      }
-      const profilePhotoPath = req.files?.profilePhoto[0]?.path;
+
+      const profilePhotoPath = req.files?.newData[0]?.path;
       console.log("profilePhotoPath::::",profilePhotoPath);
       if (!profilePhotoPath) {
         throw new ApiError(400, "Please upload a profile photo");
       }
       const profilePhoto = await uploadOnCloudinary(profilePhotoPath);
       console.log("Profile Photo:::::",profilePhoto);
-      user.profilePhoto = profilePhoto;
+      user.profileImage = profilePhoto.url;
       await user.save({ validateBeforeSave: false });
       return res
       .status(200)
