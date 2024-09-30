@@ -74,15 +74,6 @@ export const registerUser = asyncHandler(async (req, res) => {
     throw new ApiError(409, "The user with this phone number already exists");
   }
 
-  //Dealing the with the image uploading
-  // const profilePhotoPath = req.files?.profilePhoto[0]?.path;
-
-  // if(!profilePhotoPath){
-  //   throw new ApiError(400, "Please upload a profile photo");
-  // }
-
-  // const profilePhoto = await uploadOnCloudinary(profilePhotoPath);
-  //This will return the URL of the profile photo
 
   try {
     const user = await User.create({
@@ -322,7 +313,7 @@ export const editProfile = asyncHandler(async (req, res) => {
       await user.save({ validateBeforeSave: false });
       return res
       .status(200)
-      .json(new ApiResponse(200, null, "Profile Photo updated successfully"));
+      .json(new ApiResponse(200, profilePhoto.url, "Profile Photo updated successfully"));
     default:
       break;
   }
