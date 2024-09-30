@@ -14,11 +14,6 @@ import { Home as HomeIcon, Search, Message, Settings, MoreHoriz } from '@mui/ico
 import { useNavigate } from 'react-router-dom';
 import defaultProfileImage from '../assets/defaultProfileImage.png';
 import axios from 'axios'; // Import axios for API calls
-interface User {
-  id: number;
-  username: string;
-  profileImage: string;
-}
 
 export default function Home() {
   const navigate = useNavigate();
@@ -29,26 +24,24 @@ export default function Home() {
 
   const [moreOptionsOpen, setMoreOptionsOpen] = useState(false);
   const [value, setValue] = useState(0);
-  const [suggestedUsers, setSuggestedUsers] = useState([] as User[]);
+  const [suggestedUsers, setSuggestedUsers] = useState([]);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
       navigate("/");
     } else {
-      // Fetch suggested users
-      // axios.get('/api/v1/users/getUserSuggestion')
-      //   .then(response => setSuggestedUsers(response.data))
-      //   .catch(error => console.error(error));
-      setSuggestedUsers([
-        { id: 1, username: 'user1', profileImage: '' },
-        { id: 2, username: 'user2', profileImage: '' },
-        { id: 3, username: 'user3', profileImage: '' },
-        { id: 4, username: 'user4', profileImage: '' },
-        { id: 5, username: 'user5', profileImage: '' },
-      ]);
+      // Fetch suggested users with GET request
+      axios
+        .get(`http://localhost:4000/api/v1/users/getUserSuggestion?currentUserId=${userData._id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`, // Include token in headers for authorization
+          },
+        })
+        .then((response) => setSuggestedUsers(response.data?.data || [])) // Handle the response to get suggested users
+        .catch((error) => console.error('Error fetching suggested users:', error));
     }
-  }, [navigate]);
+  }, [navigate, userData._id]);
 
   const drawerContent = (
     <Stack
@@ -189,7 +182,7 @@ export default function Home() {
 
             {/* Suggested Users */}
             {suggestedUsers.map((user) => (
-              <Stack key={userData.id} direction="row" alignItems="center" sx={{ marginBottom: 1 }}>
+              <Stack key={userData._id} direction="row" alignItems="center" sx={{ marginBottom: 1 }}>
                 <IconButton
                   disableRipple
                   sx={{
@@ -215,9 +208,9 @@ export default function Home() {
                 <Typography
                   variant="body2"
                   sx={{ cursor: 'pointer', color: 'black' }}
-                  onClick={() => navigate(`/profile/${user.username}`)}
+                  onClick={() => navigate(`/profile/${userData.username}`)}
                 >
-                  {user.username}
+                  {userData.username}
                 </Typography>
               </Stack>
             ))}

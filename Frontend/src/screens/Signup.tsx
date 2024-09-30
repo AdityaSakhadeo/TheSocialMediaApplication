@@ -1,18 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { Link as MuiLink,
-  ThemeProvider,
-  Stack,
-  TextField,Button,
-  Typography,
+import {
   Box,
-  Grid2,
+  Button,
   CircularProgress,
-  Link,
+  Link as MuiLink,
+  Stack,
+  TextField,
+  Typography,
   useMediaQuery,
-  useTheme} from "@mui/material";
-import { Google as GoogleIcon, Facebook as FacebookIcon, Twitter as TwitterIcon } from "@mui/icons-material";
+  useTheme,
+} from "@mui/material";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
-import TravelGram from "../assets/TravelGram.jpg";
+import Grid from "@mui/material/Grid";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/store/store";
 import { setLoading } from "../redux/slices/loaderSlice";
@@ -29,10 +28,9 @@ export default function Signup() {
     password: "",
   });
   const [mobileOrEmail, setMobileOrEmail] = useState(""); // Track the input separately
-  const [errors, setErrors] = useState({username: "", password: ""});
+  const [errors, setErrors] = useState({ username: "", password: "" });
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down('md'));
-
 
   useEffect(() => {
     dispatch(setLoading(true));
@@ -43,7 +41,6 @@ export default function Signup() {
     }
     dispatch(setLoading(false));
   }, [navigate]);
-  
 
   useEffect(() => {
     if (!isSmall) {
@@ -57,8 +54,6 @@ export default function Signup() {
       document.body.style.overflow = 'auto';
     };
   }, [isSmall]);
-
-
 
   const handleSignup = async (e: any) => {
     e.preventDefault();
@@ -82,28 +77,23 @@ export default function Signup() {
       }
     );
 
-    if (!response.ok) {
-      const data = await response.json();
-      setErrors(data.errors);
-    }
-
     const result = await response.json();
-    console.log(result);
+
+    if (!response.ok) {
+      setErrors(result.errors);
+      dispatch(setLoading(false));
+    }
 
     if (result.success) {
       dispatch(setLoading(false));
-      alert("User Created successfully, now you can log in---->")
+      alert("User Created successfully, now you can log in");
       navigate("/");
-    } else {
-      if (result.statusCode == 400) {
-        dispatch(setLoading(false));
-        alert(result.message[0]);
-      }
+    } else if (result.statusCode === 400) {
+      alert(result.message[0]);
       dispatch(setLoading(false));
     }
   };
 
-  // Updated setSelectedFields to handle input properly
   const setSelectedFields = (input: string) => {
     const mobile = /^[0-9]+$/;
     if (input.includes("@")) {
@@ -115,163 +105,115 @@ export default function Signup() {
     }
   };
 
-  const handleChange = (e: any) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setCredentials({ ...credentials, [name]: value });
   };
 
-  // const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   setCredentials({ ...credentials, [e.target.name]: e.target.value });
-  // };
-
-  const handleMobileOrEmailChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleMobileOrEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setMobileOrEmail(e.target.value);
-    setSelectedFields(e.target.value); // Pass the correct value here
+    setSelectedFields(e.target.value);
   };
 
-return (
-
-  <Box display="flex" justifyContent="center" alignItems="center" height="100vh" width="100vw" bgcolor="#FFECEC">
-    
-    <Grid2 
-      container direction="column"
-      alignItems="center"
-      justifyContent="center"
-      alignItems="center"
-      height="100vh"
-      width="100vw"
-      bgcolor="#FFECEC"
-    >
-      <Grid2
+  return (
+    <Box display="flex" justifyContent="center" alignItems="center" height="100vh" width="100vw" bgcolor="#FFECEC">
+      <Grid
         container
         direction="column"
         alignItems="center"
         justifyContent="center"
-        border="1px solid grey"
-        boxShadow="0px 2px 4px rgba(0, 0, 0, 0.25)"
-        borderRadius="7px"
-        height="80vh"
-        bgcolor="#FFEDED"
+        height="100vh"
       >
-        <Stack
-          width={"70%"}
-          height={"100vh"}
-          alignItems={"center"}
-          justifyContent={"center"}
-          paddingInline={"50px"}
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          height="80vh"
+          width="100vw"
           bgcolor="#FFEDED"
+          border="1px solid grey"
+          boxShadow="0px 2px 4px rgba(0, 0, 0, 0.25)"
+          borderRadius="7px"
         >
-          Welcome to TravelGram !!
-        </Typography>
+          <Stack
+            width={isSmall ? "80%" : "70%"}
+            height="100vh"
+            alignItems="center"
+            justifyContent="center"
+            paddingInline={"50px"}
+            bgcolor="#FFEDED"
+          >
+            <Typography variant="h4" marginBottom={2}>
+              Welcome to TravelGram !!
+            </Typography>
 
+            {/* Mobile Number or Email Address Input */}
+            <Stack width={"100%"} marginBottom={2}>
+              <TextField
+                name="mobileOrEmail"
+                variant="standard"
+                placeholder="Enter Email or Username or Phone Number"
+                onChange={handleMobileOrEmailChange}
+                fullWidth
+                sx={{ backgroundColor: "#FFECEC" }}
+              />
+            </Stack>
 
-        {/* Mobile Number or Email Address Input */}
-        
+            {/* Full Name Input */}
+            <TextField
+              name="fullName"
+              variant="standard"
+              placeholder="Enter Full Name"
+              onChange={handleChange}
+              fullWidth
+              sx={{ backgroundColor: "#FFECEC" }}
+              margin="normal"
+            />
 
-        <Stack width={"100%"} height={"auto"}>
-        <TextField
-          name="mobileOrEmail"
-          variant="standard"
-          placeholder="Enter Email or Username or Phone Number"
-          //type={checkType(credentials.input) ? "email" : "username"}
-          onChange={handleMobileOrEmailChange}
-          fullWidth
-          sx={{backgroundColor:"#FFECEC"}}
-        />
+            {/* Username Input */}
+            <TextField
+              name="username"
+              variant="standard"
+              placeholder="Enter Username"
+              onChange={handleChange}
+              fullWidth
+              sx={{ backgroundColor: "#FFECEC" }}
+              margin="normal"
+            />
 
-        </Stack>
-        
-        {/* Full Name Input */}
-        <TextField
-          name="fullName"
-          variant="standard"
-          placeholder="Enter Full Name"
-          //type={checkType(credentials.input) ? "email" : "username"}
-          onChange={handleChange}
-          fullWidth
-          sx={{backgroundColor:"#FFECEC"}}
-        />
-        
-        {/* Username Input */}
-        <Stack width={"100%"} height={"auto"}></Stack>
-          
-        <TextField
-          name="username"
-          variant="standard"
-          placeholder="Enter Username"
-          //type={checkType(credentials.input) ? "email" : "username"}
-          onChange={handleChange}
-          fullWidth
-          sx={{backgroundColor:"#FFECEC"}}
-        />
-       
-        {/* Password Input */}
-        
-          
-          <TextField
-            name="password"
-            variant="standard"
-            placeholder="Enter password"
-            type="password"
-            onChange={handleChange}
-            fullWidth
-            sx={{backgroundColor:"#FFECEC"}}
-          />
-        {/* Stack for the login button */}
-      <Stack width={isSmall ? "80%" : "70%"} height={"auto"} marginBottom={"20px"}>
-        <Button
-          variant="contained"
-          onClick={handleSignup}
-          disableRipple
-          sx={{
-            backgroundColor: "#EBA51A",
-            color: "#FFFFFF", // Default text color
-            "&:hover": {
-              backgroundColor: "#333333", // Background color on hover
-            },
-          }}
-          disabled={!credentials.username || !credentials.password || credentials.password.length < 8 || isLoading }
-        >
-          {isLoading ? <CircularProgress size={24} color="inherit" /> : "Sign In"}
-        </Button>
-      </Stack>
-      </Stack>
-    </Grid2>
-  </Box>
-);
+            {/* Password Input */}
+            <TextField
+              name="password"
+              variant="standard"
+              placeholder="Enter password"
+              type="password"
+              onChange={handleChange}
+              fullWidth
+              sx={{ backgroundColor: "#FFECEC" }}
+              margin="normal"
+            />
 
-
-          {/* Signup Button */}
-          <Stack width={"100%"} height={"auto"}>
-            <Button
-              variant="contained"
-              onClick={handleSignup}
-              disableRipple
-              sx={{
-                backgroundColor: "#EBA51A",
-                color: "#FFFFFF", // Default text color
-                "&:hover": {
-                  backgroundColor: "#333333", // Background color on hover
-                },
-              }}
-              disabled={
-                !credentials.username ||
-                !credentials.password ||
-                credentials.password.length < 8 ||
-                isLoading
-              }
-            >
-              {isLoading ? (
-                <CircularProgress size={24} color="inherit" />
-              ) : (
-                "Login"
-              )}
-            </Button>
+            {/* Sign Up Button */}
+            <Stack width={isSmall ? "80%" : "70%"} marginTop={2} marginBottom={2}>
+              <Button
+                variant="contained"
+                onClick={handleSignup}
+                disableRipple
+                sx={{
+                  backgroundColor: "#EBA51A",
+                  color: "#FFFFFF",
+                  "&:hover": {
+                    backgroundColor: "#333333",
+                  },
+                }}
+                disabled={!credentials.username || !credentials.password || credentials.password.length < 8 || isLoading}
+              >
+                {isLoading ? <CircularProgress size={24} color="inherit" /> : "Sign Up"}
+              </Button>
+            </Stack>
           </Stack>
-        </Stack>
-      </Grid2>
+        </Box>
+      </Grid>
     </Box>
   );
 }
