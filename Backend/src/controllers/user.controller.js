@@ -5,7 +5,6 @@ import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/APIResponse.js";
 import { json } from "express";
 
-
 /**
  * @description : Function to genrate the access and refresh token
  * @route : integrated function
@@ -75,16 +74,6 @@ export const registerUser = asyncHandler(async (req, res) => {
     throw new ApiError(409, "The user with this phone number already exists");
   }
 
-  if (existedUser) {
-    throw new ApiError(409, "The user with this username already exists");
-  }
-  if (existedUserEmail) {
-    throw new ApiError(409, "The user with this email already exists");
-  }
-  if (existedUserPhoneNumber) {
-    throw new ApiError(409, "The user with this phone number exists");
-  }
-
   //Dealing the with the image uploading
   // const profilePhotoPath = req.files?.profilePhoto[0]?.path;
 
@@ -133,7 +122,6 @@ export const registerUser = asyncHandler(async (req, res) => {
     throw new ApiError(500, "Server Error");
   }
 });
-
 
 /**
  * @description : Function to login the user
@@ -210,6 +198,135 @@ export const loginUser = asyncHandler(async (req, res) => {
     );
 });
 
+/**
+ * @description : Function to update the profile of the user
+ * @route : /api/v1/users/updateProfile
+ * @access : /Private
+ */
+
+export const editProfile = asyncHandler(async (req, res) => {
+  const { currentUserId, updateField, newData } = req.body;
+  const user = await User.findById(currentUserId).select(
+    "-password -refreshToken"
+  );
+
+  if (!user) {
+    return res.status(401).json(new ApiResponse(401, null, "User not found"));
+  }
+
+  switch (updateField) {
+    case "username":
+      const isUsernameExist = await User.findOne({
+        username: newData.toLowerCase(),
+      });
+      if (isUsernameExist) {
+        return res
+          .status(400)
+          .json(new ApiResponse(400, null, "Username already exist"));
+      }
+      user.username = newData.toLowerCase();
+      await user.save({ validateBeforeSave: false });
+      return res
+        .status(200)
+        .json(new ApiResponse(200, null, "Username updated successfully"));
+      break;
+
+    case "email":
+      if (!newData.includes("@")) {
+        return res
+          .status(400)
+          .json(new ApiResponse(400, null, "Invalid email"));
+      }
+
+      if (user.email === newData) {
+        console.log("I am here");
+        return res
+          .status(400)
+          .json(new ApiResponse(400, null, "You have provided the same email"));
+      }
+
+      const isEmailExist = await User.findOne({ email: newData.toLowerCase() });
+      if (isEmailExist) {
+        return res
+          .status(400)
+          .json(new ApiResponse(400, null, "Email already exist"));
+      }
+
+      user.email = newData.toLowerCase();
+      await user.save({ validateBeforeSave: false });
+      return res
+        .status(200)
+        .json(new ApiResponse(200, null, "Email updated successfully"));
+
+    case "phoneNumber":
+      const mobile = /^[0-9]{10}$/;
+      if (!mobile.test(newData)) {
+        return res
+          .status(400)
+          .json(new ApiResponse(400, null, "Invalid Phone Number"));
+      }
+
+      if (user.phoneNumber === newData) {
+        return res
+          .status(200)
+          .json(
+            new ApiResponse(
+              400,
+              null,
+              "You have provided the same phone number"
+            )
+          );
+      }
+
+      const isPhoneNumberExist = await User.findOne({ phoneNumber: newData });
+      if (isPhoneNumberExist) {
+        return res
+          .status(400)
+          .json(
+            new ApiResponse(
+              400,
+              null,
+              "Other account already registered with this phone number"
+            )
+          );
+      }
+
+      user.phoneNumber = newData;
+      await user.save({ validateBeforeSave: false });
+      return res
+        .status(200)
+        .json(new ApiResponse(200, null, "Phone Number Updated successfully"));
+
+    case "fullName":
+      if (!newData) {
+        return res
+          .status(400)
+          .json(new ApiResponse(400, null, "Full name can not be empty"));
+      }
+      user.fullName = newData;
+      await user.save({ validateBeforeSave: false });
+      return res
+        .status(200)
+        .json(new ApiResponse(200, null, "Full Name updated successfully"));
+
+    case "profilePhoto":
+
+      const profilePhotoPath = req.files?.newData[0]?.path;
+      // console.log("profilePhotoPath::::",profilePhotoPath);
+      if (!profilePhotoPath) {
+        throw new ApiError(400, "Please upload a profile photo");
+      }
+      const profilePhoto = await uploadOnCloudinary(profilePhotoPath);
+      // console.log("Profile Photo:::::",profilePhoto);
+      user.profileImage = profilePhoto.url;
+      await user.save({ validateBeforeSave: false });
+      return res
+      .status(200)
+      .json(new ApiResponse(200, null, "Profile Photo updated successfully"));
+    default:
+      break;
+  }
+});
 
 /**
  * @description : Function to logout the user
@@ -244,51 +361,17 @@ export const logoutUser = asyncHandler(async (req, res) => {
 
 
 /**
- * @description : Function to upload the media to cloudinary
- * @route : /api/v1/users/uploadProfileImage
- * @access : Private
- */
-
-export const uploadProfileImage = asyncHandler(async (req, res) => {
-  try {
-    const { user_id } = req.body;
-    const profileImagePath = req.files?.avatar[0]?.path;
-    if (!profileImagePath) {
-      return new ApiResponse(400, null, "Image source not received");
-    }
-    const profileImage = uploadOnCloudinary(profileImagePath);
-
-    if (!profileImage) {
-      return new ApiResponse(400, null, "Image source not received");
-    }
-
-    const user = User.findById(user_id);
-    if (!user) {
-      return new ApiResponse(404, null, "User not found");
-    }
-    user.profileImage = profileImage;
-    await user.save({ validateBeforeSave: false });
-    return res
-      .status(200)
-      .json(new ApiResponse(200, user, "Profile image uploaded successfully"));
-  } catch (error) {
-    throw new ApiError(500, "Error while uploading profile image");
-  }
-});
-
-
-/**
  * @description : Function to get the user information
  * @route : /api/v1/users/getUserProfile
  * @access : Public
  */
 
 export const getUserProfile = asyncHandler(async (req, res) => {
-
   const { username } = req.body;
 
-  const user = await User.findOne({ username: username.toLowerCase() })
-    .select("-password -refreshToken")
+  const user = await User.findOne({ username: username.toLowerCase() }).select(
+    "-password -refreshToken"
+  );
 
   if (!user) {
     return res
@@ -296,11 +379,10 @@ export const getUserProfile = asyncHandler(async (req, res) => {
       .json(new ApiResponse(404, null, "User with this username not found!!"));
   }
 
-
   return res
     .status(200)
     .json(new ApiResponse(200, user, "User profile retrived successfully"));
-})
+});
 
 /**
  * @description : Control flow used for following the user
@@ -315,9 +397,7 @@ export const followUser = asyncHandler(async (req, res) => {
   const currentUser = await User.findById(currentUserId);
 
   if (!targetUser) {
-    return res
-      .status(404)
-      .json(new ApiResponse(404, null, "User not found"));
+    return res.status(404).json(new ApiResponse(404, null, "User not found"));
   }
 
   if (targetUserId.toString() === currentUserId.toString()) {
@@ -338,7 +418,9 @@ export const followUser = asyncHandler(async (req, res) => {
   await currentUser.save({ validateBeforeSave: false });
   await targetUser.save({ validateBeforeSave: false });
 
-  return res.status(200).json(new ApiResponse(200, null, "User followed successfully"));
+  return res
+    .status(200)
+    .json(new ApiResponse(200, null, "User followed successfully"));
 });
 
 /**
@@ -350,13 +432,15 @@ export const followUser = asyncHandler(async (req, res) => {
 export const suggestRelevantUsers = asyncHandler(async (req, res) => {
   const { currentUserId } = req.body;
 
-  const currentUser = await User.findById(currentUserId).select('-password -refreshToken');
+  const currentUser = await User.findById(currentUserId).select(
+    "-password -refreshToken"
+  );
 
   if (!currentUser) {
     return res.status(404).json(new ApiResponse(404, null, "User not found"));
   }
 
-  const followedPeopleIds = currentUser.followedPeople.map(user => user._id);
+  const followedPeopleIds = currentUser.followedPeople.map((user) => user._id);
 
   let suggestedUsers = await User.find({
     _id: { $nin: [...followedPeopleIds, currentUserId] },
@@ -371,7 +455,13 @@ export const suggestRelevantUsers = asyncHandler(async (req, res) => {
     ]);
   }
 
-  return res.status(200).json(new ApiResponse(200, suggestedUsers, "Relevant users suggested successfully"));
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        suggestedUsers,
+        "Relevant users suggested successfully"
+      )
+    );
 });
-
-
