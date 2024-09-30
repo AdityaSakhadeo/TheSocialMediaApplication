@@ -23,6 +23,7 @@ interface User {
 export default function Home() {
   const navigate = useNavigate();
   const userData = JSON.parse(localStorage.getItem("userInformation") || '{}');
+  const profileImage = userData?.user?.profileImage?userData.user.profileImage:defaultProfileImage;
   const theme = useTheme();
   const isMid = useMediaQuery(theme.breakpoints.down('md'));
   const isSmall = useMediaQuery(theme.breakpoints.down('sm'));
@@ -176,7 +177,7 @@ export default function Home() {
               }}
             >
               <img
-                src={userData?.profileImage || defaultProfileImage}
+                src={profileImage}
                 alt="Profile"
                 style={{
                   width: '100%',
