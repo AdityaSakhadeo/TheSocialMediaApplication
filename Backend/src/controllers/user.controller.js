@@ -204,7 +204,7 @@ export const loginUser = asyncHandler(async (req, res) => {
  * @access : /Private
  */
 
-export const updateProfile = asyncHandler(async (req, res) => {
+export const editProfile = asyncHandler(async (req, res) => {
   const { currentUserId, updateField, newData } = req.body;
   const user = await User.findById(currentUserId).select(
     "-password -refreshToken"
@@ -312,12 +312,12 @@ export const updateProfile = asyncHandler(async (req, res) => {
     case "profilePhoto":
 
       const profilePhotoPath = req.files?.newData[0]?.path;
-      console.log("profilePhotoPath::::",profilePhotoPath);
+      // console.log("profilePhotoPath::::",profilePhotoPath);
       if (!profilePhotoPath) {
         throw new ApiError(400, "Please upload a profile photo");
       }
       const profilePhoto = await uploadOnCloudinary(profilePhotoPath);
-      console.log("Profile Photo:::::",profilePhoto);
+      // console.log("Profile Photo:::::",profilePhoto);
       user.profileImage = profilePhoto.url;
       await user.save({ validateBeforeSave: false });
       return res
@@ -359,38 +359,6 @@ export const logoutUser = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, {}, "User logged out"));
 });
 
-/**
- * @description : Function to upload the media to cloudinary
- * @route : /api/v1/users/uploadProfileImage
- * @access : Private
- */
-
-export const uploadProfileImage = asyncHandler(async (req, res) => {
-  try {
-    const { user_id } = req.body;
-    const profileImagePath = req.files?.avatar[0]?.path;
-    if (!profileImagePath) {
-      return new ApiResponse(400, null, "Image source not received");
-    }
-    const profileImage = uploadOnCloudinary(profileImagePath);
-
-    if (!profileImage) {
-      return new ApiResponse(400, null, "Image source not received");
-    }
-
-    const user = User.findById(user_id);
-    if (!user) {
-      return new ApiResponse(404, null, "User not found");
-    }
-    user.profileImage = profileImage;
-    await user.save({ validateBeforeSave: false });
-    return res
-      .status(200)
-      .json(new ApiResponse(200, user, "Profile image uploaded successfully"));
-  } catch (error) {
-    throw new ApiError(500, "Error while uploading profile image");
-  }
-});
 
 /**
  * @description : Function to get the user information
