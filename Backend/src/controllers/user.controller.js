@@ -421,7 +421,7 @@ export const followUser = asyncHandler(async (req, res) => {
  */
 
 export const suggestRelevantUsers = asyncHandler(async (req, res) => {
-  const { currentUserId } = req.body;
+  const { currentUserId } = req.query;
 
   const currentUser = await User.findById(currentUserId).select(
     "-password -refreshToken"
