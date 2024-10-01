@@ -38,7 +38,7 @@ export default function Home() {
 
   const [moreOptionsOpen, setMoreOptionsOpen] = useState(false);
   const [value, setValue] = useState(0);
-  const [suggestedUsers, setSuggestedUsers] = useState([] as User[]);
+  const [suggestedUsers, setSuggestedUsers] = useState([]);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -291,7 +291,7 @@ export default function Home() {
                   sx={{ cursor: "pointer", color: "black" }}
                   onClick={() => navigate(`/profile/${user.username}`)}
                 >
-                  {user.username}
+                  {userData.username}
                 </Typography>
               </Stack>
             ))}
