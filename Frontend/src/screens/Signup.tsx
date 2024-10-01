@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   CircularProgress,
+  Grid2,
   Link as MuiLink,
   Stack,
   TextField,
@@ -75,7 +76,7 @@ export default function Signup() {
         password: credentials.password,
       }),
     });
-
+    const result = await response.json();
     if (!response.ok) {
       setErrors(result.errors);
       dispatch(setLoading(false));
