@@ -112,9 +112,6 @@ export default function Signup() {
     setCredentials({ ...credentials, [name]: value });
     };
 
-  // const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   setCredentials({ ...credentials, [e.target.name]: e.target.value });
-  // };
 
   const handleMobileOrEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setMobileOrEmail(e.target.value);
@@ -156,11 +153,8 @@ return (
             marginBottom: "20px",
             width: "100px",
             height: "100px"
-          }}
-          
-
+          }}   
           alt="TravelGram Logo" />
-
         <Typography
           variant="h6"
           fontSize={"20px"}
@@ -170,6 +164,8 @@ return (
         >
           Welcome to TravelGram !!
         </Typography>
+        
+
 
 
         {/* Mobile Number or Email Address Input */}
@@ -189,6 +185,7 @@ return (
         </Stack>
         
         {/* Full Name Input */}
+        
         <TextField
           name="fullName"
           variant="standard"
@@ -200,7 +197,7 @@ return (
         />
         
         {/* Username Input */}
-        <Stack width={"100%"} height={"auto"}></Stack>
+        
           
         <TextField
           name="username"
@@ -247,6 +244,4 @@ return (
     </Grid2>
   </Box>
 );
-
-
 }
