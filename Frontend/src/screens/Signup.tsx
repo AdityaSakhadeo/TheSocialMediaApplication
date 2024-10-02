@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { Link as MuiLink,
-  ThemeProvider,
-  Stack,
-  TextField,Button,
-  Typography,
+import {
   Box,
-  Grid2,
+  Button,
   CircularProgress,
-  Link,
+  Grid2,
+  Link as MuiLink,
+  Stack,
+  TextField,
+  Typography,
   useMediaQuery,
-  useTheme} from "@mui/material";
-import { Google as GoogleIcon, Facebook as FacebookIcon, Twitter as TwitterIcon } from "@mui/icons-material";
+  useTheme,
+} from "@mui/material";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import TravelGram from "../assets/TravelGram.jpg";
 import { useDispatch, useSelector } from 'react-redux';
@@ -25,10 +25,9 @@ export default function Signup() {
   const isLoading = useSelector((state: RootState) => state.loader.isLoading);
   const [credentials, setCredentials] = useState({ username: "", mobile: "", fullName: "", email: "", password: "" });
   const [mobileOrEmail, setMobileOrEmail] = useState(""); // Track the input separately
-  const [errors, setErrors] = useState({username: "", password: ""});
+  const [errors, setErrors] = useState({ username: "", password: "" });
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down('md'));
-
 
   useEffect(() => {
     dispatch(setLoading(true));
@@ -39,7 +38,6 @@ export default function Signup() {
     }
     dispatch(setLoading(false));
   }, [navigate]);
-  
 
   useEffect(() => {
     if (!isSmall) {
@@ -78,18 +76,15 @@ export default function Signup() {
         password: credentials.password,
       }),
     });
-
-    if (!response.ok) {
-      const data = await response.json();
-      setErrors(data.errors);
-    }
-
     const result = await response.json();
-    console.log(result);
+    if (!response.ok) {
+      setErrors(result.errors);
+      dispatch(setLoading(false));
+    }
 
     if (result.success) {
       dispatch(setLoading(false));
-      alert("User Created successfully, now you can log in---->")
+      alert("User Created successfully, now you can log in");
       navigate("/");
     } else {
       if (result.statusCode==400) {
@@ -100,7 +95,6 @@ export default function Signup() {
     }
   };
 
-  // Updated setSelectedFields to handle input properly
   const setSelectedFields = (input: string) => {
     const mobile = /^[0-9]+$/
     if (input.includes("@")) {
@@ -121,7 +115,7 @@ export default function Signup() {
 
   const handleMobileOrEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setMobileOrEmail(e.target.value);
-    setSelectedFields(e.target.value); // Pass the correct value here
+    setSelectedFields(e.target.value);
   };
 
 
@@ -159,12 +153,8 @@ return (
             marginBottom: "20px",
             width: "100px",
             height: "100px"
-          }}
-        
-        alt="TravelGram Logo" />
-
-        
-        
+          }}   
+          alt="TravelGram Logo" />
         <Typography
           variant="h6"
           fontSize={"20px"}
@@ -254,13 +244,4 @@ return (
     </Grid2>
   </Box>
 );
-
-
 }
-
-
-
-
-
-
-

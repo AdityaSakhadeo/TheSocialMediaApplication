@@ -79,7 +79,6 @@ const userSchema = new Schema(
     },
     profileImage: {
       type: String,
-      default: "default.jpg",
     },
     userBio: {
       type: String,
