@@ -3,7 +3,10 @@ import {
   Box,
   Button,
   CircularProgress,
+  Container,
+  Divider,
   Grid2,
+  Link,
   Link as MuiLink,
   Stack,
   TextField,
@@ -16,7 +19,6 @@ import TravelGram from "../assets/TravelGram.jpg";
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../redux/store/store';
 import { setLoading } from '../redux/slices/loaderSlice';
-
 
 
 export default function Signup() {
@@ -121,31 +123,33 @@ export default function Signup() {
 
 return (
 
+
   <Box display="flex" justifyContent="center" alignItems="center" height="100vh" width="100vw" bgcolor="#FFECEC">
     
-    <Grid2 
-      container direction="column"
+    <Stack
+      direction="column"
       alignItems="center"
       justifyContent="center"
       border="1px solid grey"
       boxShadow="0px 2px 4px rgba(0, 0, 0, 0.25)"
-      borderRadius="7px"
-      height="80vh"
+      borderRadius="0px"
+      height="95vh"
+      width="25%"
       bgcolor="#FFEDED"
       >
-        
-      
 
-
-
-      <Stack
+      <Stack 
+        direction="column"
+        spacing={2.5}
         width={"50%"}
         height={"100vh"}
         alignItems={"center"}
         justifyContent={"center"}
         paddingInline={"60px"}
-        bgcolor="#FFEDED">
-
+        bgcolor="#FFEDED"
+        >
+ 
+        
         <img src={TravelGram} 
           style={{
             borderRadius: "40%",
@@ -155,45 +159,45 @@ return (
             height: "100px"
           }}   
           alt="TravelGram Logo" />
+          
         <Typography
           variant="h6"
-          fontSize={"20px"}
+          fontSize={"15px"}
           bgcolor="#FFEDED"
-          color='orange'
-          justifyContent={"center"}
+          color='textSecondary'
+          component='h2'
+          align='center'
         >
-          Welcome to TravelGram !!
+          Sign up to see photos and videos from your friends.
         </Typography>
-        
-
-
 
         {/* Mobile Number or Email Address Input */}
-        
 
-        <Stack width={"100%"} height={"auto"}>
         <TextField
           name="mobileOrEmail"
-          variant="standard"
           placeholder="Enter Email or Username or Phone Number"
-          //type={checkType(credentials.input) ? "email" : "username"}
+          variant="standard"
+          size='small'
+          color="primary"
           onChange={handleMobileOrEmailChange}
           fullWidth
-          sx={{backgroundColor:"#FFECEC"}}
+          sx={{backgroundColor:"#FFEDED"}}
+
         />
 
-        </Stack>
-        
         {/* Full Name Input */}
         
         <TextField
+          
           name="fullName"
           variant="standard"
           placeholder="Enter Full Name"
+          size='small'
+          color="primary"
           //type={checkType(credentials.input) ? "email" : "username"}
           onChange={handleChange}
           fullWidth
-          sx={{backgroundColor:"#FFECEC"}}
+          sx={{backgroundColor:"#FFEDED"}}
         />
         
         {/* Username Input */}
@@ -203,15 +207,16 @@ return (
           name="username"
           variant="standard"
           placeholder="Enter Username"
+          size='small'
+          color="primary"
           //type={checkType(credentials.input) ? "email" : "username"}
           onChange={handleChange}
           fullWidth
-          sx={{backgroundColor:"#FFECEC"}}
+          sx={{backgroundColor:"#FFEDED"}}
         />
        
         {/* Password Input */}
-        
-          
+                
           <TextField
             name="password"
             variant="standard"
@@ -221,11 +226,13 @@ return (
             fullWidth
             sx={{backgroundColor:"#FFECEC"}}
           />
+
         
-        {/* Stack for the login button */}
-      <Stack width={isSmall ? "80%" : "70%"} height={"auto"} marginBottom={"20px"}>
+        {/* Stack for the signin button */}
+     
         <Button
           variant="contained"
+          fullWidth
           onClick={handleSignup}
           disableRipple
           sx={{
@@ -239,9 +246,50 @@ return (
         >
           {isLoading ? <CircularProgress size={24} color="inherit" /> : "Sign In"}
         </Button>
+
+        <Typography
+          variant="caption"
+          align="center"
+          fontSize={"75%"}
+          width={"100%"}
+          bgcolor="#FFEDED"
+          color='textSecondary'
+          component='h2'
+        >
+          By signing up, you agree to our Terms, Privacy Policy and Cookies Policy.
+        </Typography>
+
+        <Stack 
+          direction="row" 
+          alignItems="center" 
+          width={"fit-content"} 
+          justifyContent="center" 
+          marginTop={"2px"} 
+          sx={{backgroundColor:"#FFECEC"}}
+        >
+        <Typography 
+          variant="caption"
+          align="center"
+          fontSize={"75%"}
+          width={"fit-content"}
+          bgcolor="#FFEDED"
+          color='textSecondary'
+          component='h2'
+        >
+          Already have an account?, 
+          <Link 
+          variant="caption"
+          align="center"
+          fontSize={"100%"}
+          href='/'
+          bgcolor={"#FFEDED"}
+          >Log in
+          </Link>
+        </Typography>
       </Stack>
+      
       </Stack>
-    </Grid2>
+    </Stack>
   </Box>
 );
 }
