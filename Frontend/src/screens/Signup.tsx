@@ -175,7 +175,7 @@ return (
 
         <TextField
           name="mobileOrEmail"
-          placeholder="Enter Email or Username or Phone Number"
+          placeholder="Enter Email or Phone Number"
           variant="standard"
           size='small'
           color="primary"
