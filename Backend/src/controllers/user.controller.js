@@ -3,8 +3,6 @@ import { ApiError } from "../utils/APIError.js";
 import { User } from "../models/userModel.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/APIResponse.js";
-import { json } from "express";
-
 /**
  * @description : Function to genrate the access and refresh token
  * @route : integrated function
@@ -39,10 +37,9 @@ export const registerUser = asyncHandler(async (req, res) => {
 
   // Ensure either email or phone number is provided
   if (!email && !phoneNumber) {
-    throw new ApiError(
-      400,
-      "Please enter either phone number or email address"
-    );
+   return res
+   .status(400)
+   .json(new ApiResponse(400,null,"Please either Phone number or email address"))
   }
 
   // Sanitize inputs (make sure null values are handled correctly)
