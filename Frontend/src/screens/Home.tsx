@@ -20,10 +20,24 @@ import {
 import { useNavigate } from "react-router-dom";
 import defaultProfileImage from "../assets/defaultProfileImage.png";
 import axios from "axios"; // Import axios for API calls
+
 interface User {
   id: number;
   username: string;
   profileImage: string;
+}
+
+interface Post {
+  postId: number;
+  image: string;
+  caption: string;
+  likes: number;
+  comments: string[];
+  totalStars: number;
+  owner: {
+    username: string;
+    profileImage: string;
+  };
 }
 
 export default function Home() {
@@ -39,6 +53,7 @@ export default function Home() {
   const [moreOptionsOpen, setMoreOptionsOpen] = useState(false);
   const [value, setValue] = useState(0);
   const [suggestedUsers, setSuggestedUsers] = useState([] as User[]);
+  const [posts, setPosts] = useState([] as Post[]); // State to hold posts
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -59,6 +74,16 @@ export default function Home() {
           console.error("Error fetching suggested users:", error);
         }
       };
+
+      const fetchPosts = async () => {
+        try {
+          const response = await axios.get("/api/v1/posts"); // Fetch posts API
+          setPosts(response.data); // Assuming API response is an array of posts
+        } catch (error) {
+          console.error("Error fetching posts:", error);
+        }
+      };
+
       setSuggestedUsers([
         { id: 1, username: "user1", profileImage: "" },
         { id: 2, username: "user2", profileImage: "" },
@@ -68,6 +93,7 @@ export default function Home() {
       ]);
 
       fetchUserSuggestions();
+      fetchPosts(); // Fetch posts when component mounts
     }
   }, [navigate, userData]);
 
@@ -213,6 +239,42 @@ export default function Home() {
             {drawerContent}
           </Drawer>
 
+          {/* Main Content */}
+          <Stack
+            sx={{
+              width: isMid ? "calc(100vw - 80px)" : "calc(100vw - 20%)",
+              height: "100%",
+              overflowY: "scroll",
+              padding: 2,
+            }}
+          >
+            {/* Display Posts */}
+            {posts.length > 0 ? (
+              posts.map((post) => (
+                <Stack key={post.postId} spacing={2} sx={{ marginBottom: 3 }}>
+                  <img
+                    src={post.image}
+                    alt="Post"
+                    style={{
+                      width: "100%",
+                      height: "auto",
+                      borderRadius: "10px",
+                    }}
+                  />
+                  <Typography variant="body1">{post.caption}</Typography>
+                  <Stack direction="row" justifyContent="space-between">
+                    <Typography>Likes: {post.likes}</Typography>
+                    <Typography>Comments: {post.comments.length}</Typography>
+                    <Typography>Total Stars: {post.totalStars}</Typography>
+                  </Stack>
+                </Stack>
+              ))
+            ) : (
+              console.log("No posts to show"),
+              <Typography>No posts to display</Typography>
+            )}
+          </Stack>
+
           {/* Profile and Suggested Users on the Right Side */}
           <Stack
             sx={{
@@ -233,108 +295,84 @@ export default function Home() {
                 height: 50,
                 borderRadius: "50%",
                 padding: 0,
-                border: "1px solid #000000",
-                backgroundColor: "#fff",
-                marginBottom: 2,
-                ":hover": {
-                  backgroundColor: "#f0f0f0",
-                  transition: "0.3s",
-                  cursor: "pointer",
-                  boxShadow: "0 0 10px 3px rgba(0, 0, 0, 0.2)",
-                },
+                border: "1px solid gray",
               }}
             >
               <img
                 src={profileImage}
                 alt="Profile"
-                style={{
-                  width: "120%",
-                  height: "120%",
-                  borderRadius: "50%",
-                  objectFit: "cover",
-                }}
+                style={{ width: "100%", borderRadius: "50%" }}
               />
             </IconButton>
-
-            {/* Suggested Users */}
-            {suggestedUsers.map((user) => (
-              <Stack
-                key={userData.id}
-                direction="row"
-                alignItems="center"
-                sx={{ marginBottom: 1 }}
-              >
-                <IconButton
-                  disableRipple
-                  sx={{
-                    width: 40,
-                    height: 40,
-                    borderRadius: "50%",
-                    padding: 0,
-                    border: "1px solid #000000",
-                    marginRight: 1,
-                  }}
-                >
-                  <img
-                    src={userData.profileImage || defaultProfileImage}
-                    alt={userData.username}
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      borderRadius: "50%",
-                      objectFit: "cover",
-                    }}
-                  />
-                </IconButton>
-                <Typography
-                  variant="body2"
-                  sx={{ cursor: "pointer", color: "black" }}
-                  onClick={() => navigate(`/profile/${user.username}`)}
-                >
-                  {user.username}
-                </Typography>
-              </Stack>
-            ))}
+            {!isMid && <Typography marginTop={1}>{userData.user.username}</Typography>}
           </Stack>
         </>
       )}
 
       {/* Bottom Navigation for small screens */}
       {isSmall && (
-        <BottomNavigation
-          showLabels={false}
-          value={value}
-          onChange={(event, newValue) => setValue(newValue)}
-          sx={{
-            position: "fixed",
-            bottom: 0,
-            left: 0,
-            right: 0,
-            width: "100%",
-            borderTop: "1px solid #ddd",
-          }}
-        >
-          <BottomNavigationAction
-            icon={<HomeIcon />}
-            onClick={() => navigate("/home")}
-            sx={{ color: "black" }}
-          />
-          <BottomNavigationAction
-            icon={<Search />}
-            onClick={() => navigate("/search")}
-            sx={{ color: "black" }}
-          />
-          <BottomNavigationAction
-            icon={<Message />}
-            onClick={() => navigate("/messages")}
-            sx={{ color: "black" }}
-          />
-          <BottomNavigationAction
-            icon={<MoreHoriz />}
-            onClick={() => setMoreOptionsOpen(!moreOptionsOpen)}
-            sx={{ color: "black" }}
-          />
-        </BottomNavigation>
+        <>
+          <Stack
+            sx={{
+              flexGrow: 1,
+              padding: 2,
+              overflowY: "scroll",
+            }}
+          >
+            {/* Display Posts */}
+            {posts.length > 0 ? (
+              posts.map((post) => (
+                <Stack key={post.postId} spacing={2} sx={{ marginBottom: 3 }}>
+                  <img
+                    src={post.image}
+                    alt="Post"
+                    style={{
+                      width: "100%",
+                      height: "auto",
+                      borderRadius: "10px",
+                    }}
+                  />
+                  <Typography variant="body1">{post.caption}</Typography>
+                  <Stack direction="row" justifyContent="space-between">
+                    <Typography>Likes: {post.likes}</Typography>
+                    <Typography>Comments: {post.comments.length}</Typography>
+                    <Typography>Total Stars: {post.totalStars}</Typography>
+                  </Stack>
+                </Stack>
+              ))
+            ) : (
+              <Typography>No posts to display</Typography>
+            )}
+          </Stack>
+          <BottomNavigation
+            showLabels
+            value={value}
+            onChange={(event, newValue) => {
+              setValue(newValue);
+            }}
+          >
+            <BottomNavigationAction
+              label="Home"
+              icon={<HomeIcon />}
+              onClick={() => window.location.reload()}
+            />
+            <BottomNavigationAction
+              label="Search"
+              icon={<Search />}
+              onClick={() => navigate("/search")}
+            />
+            <BottomNavigationAction
+              label="Messages"
+              icon={<Message />}
+              onClick={() => navigate("/messages")}
+            />
+            <BottomNavigationAction
+              label="More"
+              icon={<MoreHoriz />}
+              onClick={() => setMoreOptionsOpen(!moreOptionsOpen)}
+            />
+          </BottomNavigation>
+        </>
       )}
     </Stack>
   );
