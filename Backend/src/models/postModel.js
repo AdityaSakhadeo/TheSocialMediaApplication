@@ -2,23 +2,19 @@ import mongoose, { Schema } from "mongoose";
 
 const postSchema = new Schema(
   {
-    owner: {
+    owner: {//
       type: Schema.Types.ObjectId,
       ref: "posts",
     },
-    postId: {
+    safety: {//
       type: Number,
       required: true,
     },
-    safety: {
+    accessibility: {//
       type: Number,
       required: true,
     },
-    accessibility: {
-      type: Number,
-      required: true,
-    },
-    cost: {
+    cost: {//
       type: Number,
       required: true,
     },
@@ -30,11 +26,11 @@ const postSchema = new Schema(
       type: Number,
       default: 0,
     },
-    image: {
+    image: {//
       type: String,
       required: true,
     },
-    caption: {
+    caption: {//
       type: String,
       required: true,
     },
@@ -42,7 +38,7 @@ const postSchema = new Schema(
       type: [String],
       default: [],
     },
-    destination: {
+    destination: {//
       type: Schema.Types.ObjectId,
       ref: "Destination",
       required: true,
@@ -61,3 +57,4 @@ const postSchema = new Schema(
 const Post = mongoose.model("posts", postSchema);
 
 export default Post;
+
