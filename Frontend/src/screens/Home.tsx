@@ -19,7 +19,7 @@ import {
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import defaultProfileImage from "../assets/defaultProfileImage.png";
-import axios from "axios"; // Import axios for API calls
+import axios from "axios"; 
 
 interface User {
   id: number;
@@ -46,6 +46,10 @@ export default function Home() {
   const profileImage = userData?.user?.profileImage
     ? userData.user.profileImage
     : defaultProfileImage;
+  const currentUserId = userData?.user?._id
+    ? userData.user._id
+    : ""
+    console.log(currentUserId,"CurrentUserId");
   const theme = useTheme();
   const isMid = useMediaQuery(theme.breakpoints.down("md"));
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
@@ -60,40 +64,42 @@ export default function Home() {
     if (!token) {
       navigate("/");
     } else {
-      const fetchUserSuggestions = async () => {
+      const fetchSuggestions = async () => {
         try {
-          const response = await axios.get("/getUserSuggestion", {
-            params: {
-              currentUserId: userData.user._id, // Sending currentUserId as a query parameter
+          const response = await axios.get("/api/v1/users/getUserSuggestion", {
+          params: {
+              currentUserId,
             },
           });
-
-          console.log(response);
-          // setSuggestedUsers(response.data);
+          // setSuggestions(response.data.data); // Assuming response.data.data holds the suggested users
+          // console.log(response.data.data,"user suggestion response");
+          const usernames = response?.data?.data?.map((user:any)=>user.username);
+          console.log(usernames,"usernames")
+          setSuggestedUsers(usernames)
         } catch (error) {
-          console.error("Error fetching suggested users:", error);
+          console.error("Failed to fetch user suggestions:", error);
         }
       };
 
-      const fetchPosts = async () => {
-        try {
-          const response = await axios.get("/api/v1/posts"); // Fetch posts API
-          setPosts(response.data); // Assuming API response is an array of posts
-        } catch (error) {
-          console.error("Error fetching posts:", error);
-        }
-      };
+      // const fetchPosts = async () => {
+      //   try {
+      //     const response = await axios.get("/api/v1/posts"); // Fetch posts API
+      //     setPosts(response.data); // Assuming API response is an array of posts
+      //   } catch (error) {
+      //     console.error("Error fetching posts:", error);
+      //   }
+      // };
 
-      setSuggestedUsers([
-        { id: 1, username: "user1", profileImage: "" },
-        { id: 2, username: "user2", profileImage: "" },
-        { id: 3, username: "user3", profileImage: "" },
-        { id: 4, username: "user4", profileImage: "" },
-        { id: 5, username: "user5", profileImage: "" },
-      ]);
+      // setSuggestedUsers([
+      //   { id: 1, username: "user1", profileImage: "" },
+      //   { id: 2, username: "user2", profileImage: "" },
+      //   { id: 3, username: "user3", profileImage: "" },
+      //   { id: 4, username: "user4", profileImage: "" },
+      //   { id: 5, username: "user5", profileImage: "" },
+      // ]);
 
-      fetchUserSuggestions();
-      fetchPosts(); // Fetch posts when component mounts
+      fetchSuggestions();
+      // fetchPosts(); // Fetch posts when component mounts
     }
   }, [navigate, userData]);
 
