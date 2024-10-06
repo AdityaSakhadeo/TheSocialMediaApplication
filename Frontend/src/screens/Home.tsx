@@ -75,7 +75,7 @@ export default function Home() {
           // console.log(response.data.data,"user suggestion response");
           const usernames = response?.data?.data?.map((user:any)=>user.username);
           console.log(usernames,"usernames")
-          setSuggestedUsers(usernames)
+          // setSuggestedUsers(usernames)
         } catch (error) {
           console.error("Failed to fetch user suggestions:", error);
         }
@@ -90,13 +90,13 @@ export default function Home() {
       //   }
       // };
 
-      // setSuggestedUsers([
-      //   { id: 1, username: "user1", profileImage: "" },
-      //   { id: 2, username: "user2", profileImage: "" },
-      //   { id: 3, username: "user3", profileImage: "" },
-      //   { id: 4, username: "user4", profileImage: "" },
-      //   { id: 5, username: "user5", profileImage: "" },
-      // ]);
+      setSuggestedUsers([
+        { id: 1, username: "user1", profileImage: "" },
+        { id: 2, username: "user2", profileImage: "" },
+        { id: 3, username: "user3", profileImage: "" },
+        { id: 4, username: "user4", profileImage: "" },
+        { id: 5, username: "user5", profileImage: "" },
+      ]);
 
       fetchSuggestions();
       // fetchPosts(); // Fetch posts when component mounts
