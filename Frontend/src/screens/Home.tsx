@@ -67,19 +67,18 @@ export default function Home() {
       const fetchSuggestions = async () => {
         try {
           const response = await axios.get("/api/v1/users/getUserSuggestion", {
-          params: {
+            params: {
               currentUserId,
             },
           });
-          // setSuggestions(response.data.data); // Assuming response.data.data holds the suggested users
-          // console.log(response.data.data,"user suggestion response");
-          const usernames = response?.data?.data?.map((user:any)=>user.username);
-          console.log(usernames,"usernames")
-          // setSuggestedUsers(usernames)
+          const users = response?.data?.data; // Store the full user object
+          console.log(users, "Suggested Users Response");
+          setSuggestedUsers(users); // Set the entire user object
         } catch (error) {
           console.error("Failed to fetch user suggestions:", error);
         }
       };
+      
 
       // const fetchPosts = async () => {
       //   try {
@@ -90,18 +89,18 @@ export default function Home() {
       //   }
       // };
 
-      setSuggestedUsers([
-        { id: 1, username: "user1", profileImage: "" },
-        { id: 2, username: "user2", profileImage: "" },
-        { id: 3, username: "user3", profileImage: "" },
-        { id: 4, username: "user4", profileImage: "" },
-        { id: 5, username: "user5", profileImage: "" },
-      ]);
+      // setSuggestedUsers([
+      //   { id: 1, username: "user1", profileImage: "" },
+      //   { id: 2, username: "user2", profileImage: "" },
+      //   { id: 3, username: "user3", profileImage: "" },
+      //   { id: 4, username: "user4", profileImage: "" },
+      //   { id: 5, username: "user5", profileImage: "" },
+      // ]);
 
       fetchSuggestions();
       // fetchPosts(); // Fetch posts when component mounts
     }
-  }, [navigate, userData]);
+  }, [navigate]);
 
   const drawerContent = (
     <Stack
@@ -277,7 +276,9 @@ export default function Home() {
               ))
             ) : (
               console.log("No posts to show"),
-              <Typography>No posts to display</Typography>
+              <Typography
+              sx={{fontSize:"20px", color: "black" }}
+              >No posts to display</Typography>
             )}
           </Stack>
 
@@ -310,8 +311,56 @@ export default function Home() {
                 style={{ width: "100%", borderRadius: "50%" }}
               />
             </IconButton>
-            {!isMid && <Typography marginTop={1}>{userData.user.username}</Typography>}
+            {!isMid && <Typography marginTop={1} sx={{color:"black", justifyContent:"flex-end", 
+              right:0
+            }}>{userData.user.username}</Typography>}
           </Stack>
+          {/* Suggested users */}
+          <Stack
+          sx={{
+            marginTop: 4,
+            position: "fixed",
+            top: 100,
+            right: 10,
+            alignItems: "flex-end",
+            width: isMid ? "80px" : "20%",
+            paddingRight: 2,
+            justifyContent: "space-between",
+          }}
+        >
+          <Typography variant="h6" sx={{ color: "black", justifyContent:"flex-end" }}>
+            Suggested Users
+          </Typography>
+          {suggestedUsers.length > 0 ? (
+            suggestedUsers.map((user) => (
+              <Stack key={user.id} direction="row" spacing={2}  width={"200px"}
+              justifyContent={"space-between"}
+              sx={{ marginTop: 1,
+               }}>
+                <img
+                  src={user.profileImage ? user.profileImage : defaultProfileImage}
+                  alt="Profile"
+                  style={{ width: 50, height: 50, borderRadius: "50%" }}
+                />
+                <Typography  
+                sx={{ color: "black",  
+                      width:"150px",
+                      ":hover": {
+                        color: "blue",
+                        cursor: "pointer",
+                      }
+                    }}
+                  onClick={() => navigate(`/profile/${user.username}`)}
+                >
+                  {user.username ? user.username : "user"}
+                </Typography>
+              </Stack>
+            ))
+          ) : (
+            <Typography>No users to suggest</Typography>
+          )}
+        </Stack>
+
         </>
       )}
 
