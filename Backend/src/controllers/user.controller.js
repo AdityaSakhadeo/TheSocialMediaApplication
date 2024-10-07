@@ -39,7 +39,7 @@ export const registerUser = asyncHandler(async (req, res) => {
   if (!email && !phoneNumber) {
    return res
    .status(400)
-   .json(new ApiResponse(400,null,"Please either Phone number or email address"))
+   .json(new ApiResponse(400,null,"Please enter either Phone number or email address"))
   }
 
   // Sanitize inputs (make sure null values are handled correctly)
@@ -49,7 +49,9 @@ export const registerUser = asyncHandler(async (req, res) => {
 
   // Validate other required fields
   if ([username, fullName, password].some((field) => field?.trim() === "")) {
-    throw new ApiError(400, "Please fill all the fields");
+    return res
+    .status(200)
+    .json(new ApiResponse(400,null,"Please fill in all required fields"));
   }
 
   // Check if the username, email, or phone number already exists
@@ -62,13 +64,19 @@ export const registerUser = asyncHandler(async (req, res) => {
     : null;
 
   if (existedUser) {
-    throw new ApiError(409, "The user with this username already exists");
+    return res
+    .status(400)
+    .json(new ApiResponse(400,null,"The user with this username already exists"));
   }
   if (existedUserEmail) {
-    throw new ApiError(409, "The user with this email already exists");
+    return res
+    .status(400)
+    .json(new ApiResponse(400,null,"The user with this email already exists"));
   }
   if (existedUserPhoneNumber) {
-    throw new ApiError(409, "The user with this phone number already exists");
+    return res
+    .status(400)
+    .json(new ApiResponse(400,null,"The user with this email already exists"));
   }
 
 
@@ -87,10 +95,9 @@ export const registerUser = asyncHandler(async (req, res) => {
     );
 
     if (!createdUser) {
-      throw new ApiError(
-        500,
-        "Something went wrong while registering the user"
-      );
+      return res
+      .status(500)
+      .json(new ApiResponse(500,null,"Server error while creating the new user"));
     }
 
     return res
