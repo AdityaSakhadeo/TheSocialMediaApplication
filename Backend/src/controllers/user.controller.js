@@ -188,7 +188,7 @@ export const loginUser = asyncHandler(async (req, res) => {
 
 /**
  * @description : Function to update the profile of the user
- * @route : /api/v1/users/updateProfile
+ * @route : /api/v1/users/editProfile
  * @access : /Private
  */
 
@@ -443,6 +443,8 @@ export const suggestRelevantUsers = asyncHandler(async (req, res) => {
     ]);
   }
 
+  suggestedUsers = suggestedUsers.filter(user => user._id.toString() !== currentUserId);
+  
   return res
     .status(200)
     .json(
@@ -453,3 +455,4 @@ export const suggestRelevantUsers = asyncHandler(async (req, res) => {
       )
     );
 });
+

@@ -323,7 +323,7 @@ export default function Home() {
             top: 100,
             right: 10,
             alignItems: "flex-end",
-            width: isMid ? "80px" : "20%",
+            width: 'auto',
             paddingRight: 2,
             justifyContent: "space-between",
           }}
@@ -335,8 +335,8 @@ export default function Home() {
             suggestedUsers.map((user) => (
               <Stack key={user.id} direction="row" spacing={2}  width={"200px"}
               justifyContent={"space-between"}
-              sx={{ marginTop: 1,
-               }}>
+              sx={{ marginTop: 1}}
+               >
                 <img
                   src={user.profileImage ? user.profileImage : defaultProfileImage}
                   alt="Profile"
@@ -348,7 +348,8 @@ export default function Home() {
                       ":hover": {
                         color: "blue",
                         cursor: "pointer",
-                      }
+                      },
+                      textAlign:'center'
                     }}
                   onClick={() => navigate(`/profile/${user.username}`)}
                 >
