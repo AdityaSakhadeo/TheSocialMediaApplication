@@ -30,6 +30,7 @@ export default function Signup() {
   const [errors, setErrors] = useState({ username: "", password: "" });
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down('md'));
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     dispatch(setLoading(true));
@@ -56,7 +57,10 @@ export default function Signup() {
 
 
   
-    
+  //case 1 = both email and ph. no empty
+  //case 2 = username, fullname, pass either of them is null
+  //case 3 = existing user 
+   
     
   
 
@@ -79,6 +83,7 @@ export default function Signup() {
       }),
     });
     const result = await response.json();
+    console.log(result.message);
     if (!response.ok) {
       setErrors(result.errors);
       dispatch(setLoading(false));
@@ -90,8 +95,8 @@ export default function Signup() {
       navigate("/");
     } else {
       if (result.statusCode==400) {
+        setErrorMessage(result.message);
         dispatch(setLoading(false));
-        alert(result.message[0])
       }
       dispatch(setLoading(false));
     }
@@ -226,6 +231,15 @@ return (
             fullWidth
             sx={{backgroundColor:"#FFECEC"}}
           />
+
+        {errorMessage&&<Typography variant="h6"
+          fontSize={"15px"}
+          bgcolor="#FFEDED"
+          color='red'
+          component='h2'
+          align='center'>{errorMessage}</Typography>}
+
+         
 
         
         {/* Stack for the signin button */}

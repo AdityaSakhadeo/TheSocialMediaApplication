@@ -55,7 +55,7 @@ export const registerUser = asyncHandler(async (req, res) => {
   }
 
   // Check if the username, email, or phone number already exists
-  const existedUser = await User.findOne({ username: username.toLowerCase() });
+  const existedUser = await User.findOne({ username: username.toLowerCase().trim() });
   const existedUserEmail = sanitizedEmail
     ? await User.findOne({ email: sanitizedEmail })
     : null;
@@ -76,7 +76,7 @@ export const registerUser = asyncHandler(async (req, res) => {
   if (existedUserPhoneNumber) {
     return res
     .status(400)
-    .json(new ApiResponse(400,null,"The user with this email already exists"));
+    .json(new ApiResponse(400,null,"The user with this phone number already exists"));
   }
 
 
