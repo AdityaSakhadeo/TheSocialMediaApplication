@@ -22,6 +22,10 @@ const postSchema = new Schema(
       type: Number,
       default: 0,
     },
+    averageStars: {
+      type: Number,
+      default: 0,
+    },
     likes: {
       type: Number,
       default: 0,
@@ -47,6 +51,7 @@ const postSchema = new Schema(
       type: Boolean,
       default: true,
     },
+  
   },
 
   {
