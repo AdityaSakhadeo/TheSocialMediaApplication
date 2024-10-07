@@ -443,6 +443,8 @@ export const suggestRelevantUsers = asyncHandler(async (req, res) => {
     ]);
   }
 
+  suggestedUsers = suggestedUsers.filter(user => user._id.toString() !== currentUserId);
+  
   return res
     .status(200)
     .json(
@@ -453,3 +455,4 @@ export const suggestRelevantUsers = asyncHandler(async (req, res) => {
       )
     );
 });
+
