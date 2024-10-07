@@ -188,7 +188,7 @@ export const loginUser = asyncHandler(async (req, res) => {
 
 /**
  * @description : Function to update the profile of the user
- * @route : /api/v1/users/updateProfile
+ * @route : /api/v1/users/editProfile
  * @access : /Private
  */
 
