@@ -12,6 +12,7 @@ import ForgotPass from "./screens/ForgotPass.js";
 import "./App.css";
 import { Provider } from "react-redux";
 import {store} from './redux/store/store.js';
+import ResetPass from "./screens/ResetPass.js";
 
 
 export default function App() {
@@ -27,6 +28,7 @@ export default function App() {
         <Route  path="/home" element={<Home />} />
         <Route  path="/profile" element={<Profile />} />
         <Route  path="/forgotpass" element={<ForgotPass />} />
+        <Route  path="/resetpass" element={<ResetPass/>} />
         </Routes>
       </Router>
       </Provider>
