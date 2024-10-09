@@ -11,10 +11,11 @@ import { ApiResponse } from "../utils/APIResponse.js";
  */
 
 export const createPost = asyncHandler(async (req, res) => {
-  const { safety, accessibility, cost, caption, destination } = req.body;
+  const { currentUser,safety, accessibility, cost, caption, destination } = req.body;
+
 
   // Validate required fields: check if any of them is undefined, null, or an empty string
-  if ([safety, accessibility, cost, caption, destination].some(field => field === undefined || field === null || field === "")) {
+  if ([currentUser, safety, accessibility, cost, caption].some(field => field === undefined || field === null || field === "")) {
     return res
       .status(400)
       .json(new ApiResponse(400, null,"please upload all necessary fields"))
@@ -30,18 +31,25 @@ export const createPost = asyncHandler(async (req, res) => {
   }
 
   // Upload the image to Cloudinary and get the URL
-  const image = await uploadOnCloudinary(imagePath); // Upload to Cloudinary
+  const postImage = await uploadOnCloudinary(imagePath); // Upload to Cloudinary
+
+
+  let starSum = safety+accessibility+cost;
+  let starAvg = starSum/3;
+
 
   try {
     // Create a new post using the validated fields and uploaded image URL
     const post = await Post.create({
-      owner: req.user._id, //current user id will be the owner of the post
+      owner: currentUser, //current user id will be the owner of the post
       safety, 
       accessibility, 
       cost, 
-      image, 
+      image:postImage.url, 
       caption, 
       destination, 
+      totalStars:starSum,
+      averageStars: starAvg,
     });
 
     
