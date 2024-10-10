@@ -2,6 +2,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/APIError.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/APIResponse.js";
+import Destination from "../models/destinationModel.js";
 
 /**
  * @description : Function to upload the post
@@ -32,7 +33,8 @@ export const createPost = asyncHandler(async (req, res) => {
   // Upload the image to Cloudinary and get the URL
   const postImage = await uploadOnCloudinary(imagePath); // Upload to Cloudinary
 
-
+  const currentDestination = await Destination.findOne({destination:destination}).select('_id');
+  // const destinationId = currentDestination._id;
   let starSum = safety+accessibility+cost;
   let starAvg = starSum/3;
 
@@ -44,9 +46,9 @@ export const createPost = asyncHandler(async (req, res) => {
       safety, 
       accessibility, 
       cost, 
-      image:postImage.url, 
+      image:"", 
       caption, 
-      destination, 
+      destination:currentDestination, 
       totalStars:starSum,
       averageStars: starAvg,
     });

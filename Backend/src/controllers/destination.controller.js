@@ -15,8 +15,8 @@ export const createDestination = asyncHandler(async (req,res)=>{
         .json(new ApiResponse(400,null,"Please enter all the fields necessary to create new destination"));
     }
 
-    const duplicateName = await Destination.findOne(name);
-    const duplicateLocation = await Destination.findOne(location);
+    const duplicateName = await Destination.findOne({name:name});
+    const duplicateLocation = await Destination.findOne({location:location});
 
     if (duplicateName) {
         return res
@@ -43,7 +43,7 @@ export const createDestination = asyncHandler(async (req,res)=>{
             location
         })
 
-        const createdDestination = await findOne(destination._id);
+        const createdDestination = await Destination.findById(destination._id);
 
         if (!createdDestination) {
             return res
@@ -79,4 +79,8 @@ export const getDestinationID = asyncHandler(async(req,res)=>{
         .status(200)
         .json(new ApiResponse(200,null,"No destination found with follow"))
     }
+
+    return res
+    .status(200)
+    .json(new ApiResponse(200,destination,"Destination data retrieved"));
 })
