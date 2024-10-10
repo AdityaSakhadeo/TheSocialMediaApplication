@@ -3,6 +3,7 @@ import { ApiError } from "../utils/APIError.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/APIResponse.js";
 import Destination from "../models/destinationModel.js";
+import Post from "../models/postModel.js";
 
 /**
  * @description : Function to upload the post
@@ -12,7 +13,6 @@ import Destination from "../models/destinationModel.js";
 
 export const createPost = asyncHandler(async (req, res) => {
   const { currentUser,safety, accessibility, cost, caption, destination } = req.body;
-
 
   // Validate required fields: check if any of them is undefined, null, or an empty string
   if ([currentUser, safety, accessibility, cost, caption].some(field => field === undefined || field === null || field === "")) {
@@ -33,7 +33,13 @@ export const createPost = asyncHandler(async (req, res) => {
   // Upload the image to Cloudinary and get the URL
   const postImage = await uploadOnCloudinary(imagePath); // Upload to Cloudinary
 
-  const currentDestination = await Destination.findOne({destination:destination}).select('_id');
+  const currentDestination = await Destination.findOne({name:destination}).select('_id');
+  if(!currentDestination){
+    return res
+      .status(400)
+      .json(new ApiResponse(400, null,"current destination is not retriving"))
+    
+  }
   // const destinationId = currentDestination._id;
   let starSum = safety+accessibility+cost;
   let starAvg = starSum/3;
@@ -46,7 +52,7 @@ export const createPost = asyncHandler(async (req, res) => {
       safety, 
       accessibility, 
       cost, 
-      image:"", 
+      image:postImage.url, 
       caption, 
       destination:currentDestination, 
       totalStars:starSum,
