@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -13,7 +12,7 @@ import "./App.css";
 import { Provider } from "react-redux";
 import {store} from './redux/store/store.js';
 import ResetPass from "./screens/ResetPass.js";
-
+import PrivateRoutes from "./components/PrivateRoutes.js";
 
 export default function App() {
 
@@ -25,9 +24,10 @@ export default function App() {
         <Routes>
         <Route path="/" element={<Login />}/> 
         <Route  path="/signup" element={<Signup />} />
-        
-        <Route  path="/home" element={<Home />} />
-        <Route  path="/profile" element={<Profile />} />
+        <Route element={<PrivateRoutes />}>
+          <Route  path="/home" element={<Home />} />
+          <Route  path="/profile" element={<Profile />} />        
+        </Route>
         <Route  path="/forgot-password" element={<ForgotPass />} />
         <Route  path="/reset-password" element={<ResetPass/>} />
         </Routes>
