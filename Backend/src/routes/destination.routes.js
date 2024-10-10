@@ -1,6 +1,8 @@
-import { Route } from "express";
+import { Router } from "express";
+import { createDestination, getDestinationID } from "../controllers/destination.controller.js";
 
-const router = Route();
-router.route('/createDestination').post();
+const router = Router();
+router.route('/createDestination').post(createDestination);
+router.route('/getDestinationID').get(getDestinationID);
 
 export default router;

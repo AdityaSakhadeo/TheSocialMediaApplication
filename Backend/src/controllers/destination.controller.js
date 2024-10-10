@@ -1,12 +1,11 @@
-import Destination from "../models/destinationModel";
-import { ApiResponse } from "../utils/APIResponse";
+import Destination from "../models/destinationModel.js";
+import { ApiResponse } from "../utils/APIResponse.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
 /**
  * @description : Function to create new destination
  * @route : /api/v1/destinations/createDestination
  * @access : Private
  */
-
-import { asyncHandler } from "../utils/asyncHandler";
 
 export const createDestination = asyncHandler(async (req,res)=>{
     const {name,location} = req.body;
@@ -55,8 +54,29 @@ export const createDestination = asyncHandler(async (req,res)=>{
         return res
         .status(201)
         .json(new ApiResponse(201,createDestination,"Destination created successfully!!"));
-        
+
     } catch (error) {
         console.log(error);
+    }
+});
+
+/**
+ * @description : API to get the destination ID by the name of the destination
+ * @route : /api/v1/destinations/getDestinationID
+ * @access : Private
+ */
+export const getDestinationID = asyncHandler(async(req,res)=>{
+    const {name} = req.body;
+    if (!name) {
+        return res
+        .status(400)
+        .json(new ApiResponse(400,null,"please enter the name of the destination"));
+    }
+
+    const destination = await Destination.findOne(name);
+    if (!destination) {
+        return res
+        .status(200)
+        .json(new ApiResponse(200,null,"No destination found with follow"))
     }
 })
