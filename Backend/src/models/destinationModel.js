@@ -2,10 +2,6 @@ import mongoose, { Schema } from "mongoose";
 
 const destinationSchema = new Schema(
   {
-    _id: {
-      type: Number,
-      required: true,
-    },
     followers: {
       type: [Number],
       default: [],
@@ -20,7 +16,6 @@ const destinationSchema = new Schema(
     },
     bannerImage: {
       type: String,
-      required: true,
     },
     subImages: {
       type: [String],

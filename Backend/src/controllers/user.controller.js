@@ -234,7 +234,6 @@ export const editProfile = asyncHandler(async (req, res) => {
       }
 
       if (user.email === newData) {
-        console.log("I am here");
         return res
           .status(400)
           .json(new ApiResponse(400, null, "You have provided the same email"));

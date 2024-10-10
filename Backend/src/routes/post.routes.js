@@ -5,7 +5,7 @@ import { createPost } from "../controllers/post.controller.js";
 const router = Router();
 
 router.route("/createPost").post(
-    upolad.fields([
+    upload.fields([
         {
             name:"image",
             maxCount:1
