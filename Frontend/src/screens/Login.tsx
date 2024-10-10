@@ -18,7 +18,7 @@ import { useSelector,useDispatch } from "react-redux";
 import { setLoading } from "../redux/slices/loaderSlice";
 import "../styles/Login.css";
 import { RootState } from "../redux/store/store";
-import Loader from '../../components/loader'
+import Loader from '../components/loader'
 
 
 

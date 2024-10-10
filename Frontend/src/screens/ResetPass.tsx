@@ -20,14 +20,12 @@ import { useSelector,useDispatch } from "react-redux";
 import { setLoading } from "../redux/slices/loaderSlice";
 import "../styles/Login.css";
 import { RootState } from "../redux/store/store";
-import Loader from '../../components/loader'
+
 
 
 export default function ResetPass() {
 
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const isLoading = useSelector((state: RootState) => state.loader.isLoading);
+  
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down('md'));
   const [Email, setEmail] = useState("");

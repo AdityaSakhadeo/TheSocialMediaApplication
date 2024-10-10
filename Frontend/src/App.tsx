@@ -25,6 +25,7 @@ export default function App() {
         <Routes>
         <Route path="/" element={<Login />}/> 
         <Route  path="/signup" element={<Signup />} />
+        
         <Route  path="/home" element={<Home />} />
         <Route  path="/profile" element={<Profile />} />
         <Route  path="/forgotpass" element={<ForgotPass />} />
