@@ -1,3 +1,4 @@
 changed for samarth branch for latest frontend implementation
+****Take the .env file from the author before running the application***
 For any API please refer following as a base URL- http://localhost:4000/api/v1/
 For users - http://localhost:4000/api/v1/users/
