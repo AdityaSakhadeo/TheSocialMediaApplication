@@ -24,10 +24,11 @@ app.use(cookieParser());
 import userRouter from './routes/user.routes.js'
 import postRouter from './routes/post.routes.js'
 import destinationRouter from './routes/destination.routes.js'
-
+import actionRouter from './routes/action.routes.js'
 
 //Declaring the routes here
 app.use("/api/v1/users",userRouter); //now the url will be http://localhost:4000/user/(route that we want to use)
 app.use("/api/v1/posts",postRouter); 
 app.use("/api/v1/destinations",destinationRouter);
+app.use("/api/v1/actions",actionRouter);
 export { app };

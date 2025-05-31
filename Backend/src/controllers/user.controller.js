@@ -14,7 +14,6 @@ const genrateAccessAndRefreshTokens = async (userId) => {
     const user = await User.findById(userId);
     const accessToken = user.genrateAccessToken();
     const refreshToken = user.genrateRefreshToken();
-
     user.refreshToken = refreshToken;
     await user.save({ validateBeforeSave: false });
     return { accessToken, refreshToken };
@@ -376,45 +375,6 @@ export const getUserProfile = asyncHandler(async (req, res) => {
   return res
     .status(200)
     .json(new ApiResponse(200, user, "User profile retrived successfully"));
-});
-
-/**
- * @description : Control flow used for following the user
- * @route : /api/v1/users/follow
- * @access : Private
- */
-
-export const followUser = asyncHandler(async (req, res) => {
-  const { currentUserId, targetUserId } = req.body;
-
-  const targetUser = await User.findById(targetUserId);
-  const currentUser = await User.findById(currentUserId);
-
-  if (!targetUser) {
-    return res.status(404).json(new ApiResponse(404, null, "User not found"));
-  }
-
-  if (targetUserId.toString() === currentUserId.toString()) {
-    return res
-      .status(400)
-      .json(new ApiResponse(400, null, "You cannot follow yourself!"));
-  }
-
-  if (targetUser.followers.includes(currentUserId)) {
-    return res
-      .status(400)
-      .json(new ApiResponse(400, null, "You are already following the user"));
-  }
-
-  targetUser.followers.push(currentUserId);
-  currentUser.followedPeople.push(targetUserId);
-
-  await currentUser.save({ validateBeforeSave: false });
-  await targetUser.save({ validateBeforeSave: false });
-
-  return res
-    .status(200)
-    .json(new ApiResponse(200, null, "User followed successfully"));
 });
 
 /**
