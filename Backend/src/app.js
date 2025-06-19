@@ -3,7 +3,9 @@ import cors from "cors"
 import cookieParser from "cookie-parser"
 import dotenv from 'dotenv';
 
+// dotenv.config({path:'../env'});
 dotenv.config({path:'../env'});
+console.log("process.env.PORT",process.env.PORT)
 
 const app = express();
 //all the configurations related to the application

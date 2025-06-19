@@ -7,14 +7,14 @@ import {
   Divider,
   CircularProgress,
 } from "@mui/material";
-import {useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import TravelGram from "../assets/TravelGram.jpg";
 import loginImage from "../assets/login_image.jpeg";
 import googleIcon from "../assets/google-icon.png";
 import facebookIcon from "../assets/facebook-icon.png";
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { useSelector,useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { setLoading } from "../redux/slices/loaderSlice";
 import "../styles/Login.css";
 import { RootState } from "../redux/store/store";
@@ -29,7 +29,7 @@ export default function Login() {
   const isLoading = useSelector((state: RootState) => state.loader.isLoading);
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down('md'));
-  
+
 
   // Check if user is already logged in
   useEffect(() => {
@@ -41,7 +41,7 @@ export default function Login() {
     }
     dispatch(setLoading(false));
   }, [navigate]);
-  
+
 
   useEffect(() => {
     if (!isSmall) {
@@ -56,29 +56,29 @@ export default function Login() {
     };
   }, [isSmall]);
 
-  const [credentials, setCredentials] = useState({ input: "",logintype:"",password:"" });
+  const [credentials, setCredentials] = useState({ input: "", logintype: "", password: "" });
   const [passwordError, setPasswordError] = useState(false);
   const [errors, setErrors] = useState({ input: false, password: false });
   const [errorMessage, setErrorMessage] = useState<string | null>(null);  // New state for displaying error messages
 
 
   const handleLogin = async (e: any) => {
-       e.preventDefault();
-       dispatch(setLoading(true));
-       setPasswordError(false);
-           // Reset error states
+    e.preventDefault();
+    dispatch(setLoading(true));
+    setPasswordError(false);
+    // Reset error states
     setErrors({ input: false, password: false });
     setErrorMessage(null);
 
-       if (credentials.input.includes('@')) {
-        credentials.logintype="email";
-       }
-       else if (/^\d+$/.test(credentials.input)) {
-        credentials.logintype="phoneNumber";
-       }
-       else{
-        credentials.logintype="username"
-       }
+    if (credentials.input.includes('@')) {
+      credentials.logintype = "email";
+    }
+    else if (/^\d+$/.test(credentials.input)) {
+      credentials.logintype = "phoneNumber";
+    }
+    else {
+      credentials.logintype = "username"
+    }
     try {
       const response = await fetch("http://localhost:4000/api/v1/users/login", {
         method: "POST",
@@ -134,10 +134,10 @@ export default function Login() {
     }
   };
 
-  
-  const handleChange = (e: any) => { 
-  const { name, value } = e.target;
-  setCredentials({ ...credentials, [name]: value });
+
+  const handleChange = (e: any) => {
+    const { name, value } = e.target;
+    setCredentials({ ...credentials, [name]: value });
   };
 
 
@@ -151,115 +151,115 @@ export default function Login() {
 
   return (
     <>
-    {
-      isLoading && <Loader/>
-    }
-    <Stack width={"100vw"} height={"100vh"} direction={isSmall ? "column":"row"} sx={{backgroundColor:"#FFECEC"}}>
-    
-    {/* Stack for Image */}
-    {!isSmall && (
-      <Stack width={"50%"} height={"100%"} padding={"15px"} sx={{backgroundColor:"#FFECEC"}}>
-        <img
-          src={loginImage}
-          style={{
-            borderRadius: "10px",
-            boxShadow: "0 0 20px 10px rgba(0, 0, 200, 0.1)", // Blue glow effect,
-            objectFit: "cover",
-            objectPosition: "center",
-            width: "65%",
-            height: "85%",
-            margin: "auto",
-            display: "block",
-            transition: "border-color 0.3s ease"
-          }}
-          alt="Login"
-        />
-      </Stack>
-    )}
+      {
+        isLoading && <Loader />
+      }
+      <Stack width={"100vw"} height={"100vh"} direction={isSmall ? "column" : "row"} sx={{ backgroundColor: "#FFECEC" }}>
 
-    {/* Stack for implementing textinputs from the user */}
-    <Stack
-      width={isSmall ? "100%" : "50%"} // Full width on small screens
-      height={isSmall ? "50vh" : "100vh"} // Half height on small screens
-      alignItems={"center"}
-      justifyContent={"center"}
-      flexGrow={1}
-      padding={"15px"}
-      paddingRight={isSmall ? "15px" : "0px"} 
-      margin={isSmall ? "0px" : "15px"} // No margin on small screens
-      sx={{backgroundColor:"#FFECEC"}}
-    >
-      {/* TravelGram Logo */}
-      <img src={TravelGram} 
-      style={{ borderRadius: "40%", boxShadow: "0 0 5px 0 #000000", marginBottom: "20px" ,width:"100px", height:"100px"}}
-      alt="TravelGram"/>
-      <Typography variant="h2" fontSize={"20px"} marginBottom={"20px"} sx={{ color:"#000000", backgroundColor:"#FFECEC"}}>
-        Welcome to TravelGram !!
-      </Typography>
+        {/* Stack for Image */}
+        {!isSmall && (
+          <Stack width={"50%"} height={"100%"} padding={"15px"} sx={{ backgroundColor: "#FFECEC" }}>
+            <img
+              src={loginImage}
+              style={{
+                borderRadius: "10px",
+                boxShadow: "0 0 20px 10px rgba(0, 0, 200, 0.1)", // Blue glow effect,
+                objectFit: "cover",
+                objectPosition: "center",
+                width: "65%",
+                height: "85%",
+                margin: "auto",
+                display: "block",
+                transition: "border-color 0.3s ease"
+              }}
+              alt="Login"
+            />
+          </Stack>
+        )}
 
-      {/* Stack for the Email Input */}
-      <Stack width={"70%"} height={"auto"} marginBottom={"20px"} sx={{backgroundColor:"#ffecec"}} >
-        <TextField
-          name="input"
-          variant="standard"
-          placeholder="Enter Email or Username or Phone Number"
-          type={checkType(credentials.input) ? "email" : "username"}
-          onChange={handleChange}
-          fullWidth
-          error={errors.input}
-          helperText={errors.input && errorMessage}
-          sx={{backgroundColor:"#FFECEC"}}
-        />
-      </Stack>
-
-      {/* Stack for password */}
-      <Stack width={"70%"} height={"auto"} marginBottom={"20px"} sx={{backgroundColor:"#ffecec"}}>
-        <TextField
-          name="password"
-          variant="standard"
-          placeholder="Enter password"
-          type="password"
-          onChange={handleChange}
-          fullWidth
-          error={errors.password}
-          helperText={errors.input && errorMessage}
-          sx={{backgroundColor:"#FFECEC"}}
-        />
-      </Stack>
-
-      {/* Stack for the login button */}
-      <Stack width={isSmall ? "80%" : "70%"} height={"auto"} marginBottom={"20px"}>
-        <Button
-          variant="contained"
-          onClick={handleLogin}
-          disableRipple
-          sx={{
-            backgroundColor: "#EBA51A",
-            color: "#FFFFFF", // Default text color
-            "&:hover": {
-              backgroundColor: "#333333", // Background color on hover
-            },
-          }}
-          disabled={!credentials.input || !credentials.password || credentials.password.length < 8 || isLoading }
+        {/* Stack for implementing textinputs from the user */}
+        <Stack
+          width={isSmall ? "100%" : "50%"} // Full width on small screens
+          height={isSmall ? "50vh" : "100vh"} // Half height on small screens
+          alignItems={"center"}
+          justifyContent={"center"}
+          flexGrow={1}
+          padding={"15px"}
+          paddingRight={isSmall ? "15px" : "0px"}
+          margin={isSmall ? "0px" : "15px"} // No margin on small screens
+          sx={{ backgroundColor: "#FFECEC" }}
         >
-          {isLoading ? <CircularProgress size={24} color="inherit" /> : "Login"}
-        </Button>
-      </Stack>
+          {/* TravelGram Logo */}
+          <img src={TravelGram}
+            style={{ borderRadius: "40%", boxShadow: "0 0 5px 0 #000000", marginBottom: "20px", width: "100px", height: "100px" }}
+            alt="TravelGram" />
+          <Typography variant="h2" fontSize={"20px"} marginBottom={"20px"} sx={{ color: "#000000", backgroundColor: "#FFECEC" }}>
+            Welcome to TravelGram !!
+          </Typography>
 
-      {/* Step 2: Add Divider with "--or--" */}
-      <Stack width={isSmall ? "80%" : "70%"} direction="row" alignItems="center" spacing={1} marginBottom="20px" sx={{ backgroundColor: "#FFECEC" }} >
-        <Divider sx={{ flexGrow: 1, backgroundColor: "#FFECEC" }} />
-        <Typography variant="body2" sx={{ backgroundColor: "#FFECEC", padding: "0 10px", color:"#000000" }}>
-          or
-        </Typography>
-        <Divider sx={{ flexGrow: 1, backgroundColor: "#FFECEC" }} />
-      </Stack>
+          {/* Stack for the Email Input */}
+          <Stack width={"70%"} height={"auto"} marginBottom={"20px"} sx={{ backgroundColor: "#ffecec" }} >
+            <TextField
+              name="input"
+              variant="standard"
+              placeholder="Enter Email or Username or Phone Number"
+              type={checkType(credentials.input) ? "email" : "username"}
+              onChange={handleChange}
+              fullWidth
+              error={errors.input}
+              helperText={errors.input && errorMessage}
+              sx={{ backgroundColor: "#FFECEC" }}
+            />
+          </Stack>
 
-            {/* Step 3: Add Google and Facebook login buttons */}
-            <Stack width={isSmall ? "80%" : "70%"} spacing={2} marginBottom="20px" sx={{backgroundColor:"#FFECEC"}}>
+          {/* Stack for password */}
+          <Stack width={"70%"} height={"auto"} marginBottom={"20px"} sx={{ backgroundColor: "#ffecec" }}>
+            <TextField
+              name="password"
+              variant="standard"
+              placeholder="Enter password"
+              type="password"
+              onChange={handleChange}
+              fullWidth
+              error={errors.password}
+              helperText={errors.input && errorMessage}
+              sx={{ backgroundColor: "#FFECEC" }}
+            />
+          </Stack>
+
+          {/* Stack for the login button */}
+          <Stack width={isSmall ? "80%" : "70%"} height={"auto"} marginBottom={"20px"}>
+            <Button
+              variant="contained"
+              onClick={handleLogin}
+              disableRipple
+              sx={{
+                backgroundColor: "#EBA51A",
+                color: "#FFFFFF", // Default text color
+                "&:hover": {
+                  backgroundColor: "#333333", // Background color on hover
+                },
+              }}
+              disabled={!credentials.input || !credentials.password || credentials.password.length < 8 || isLoading}
+            >
+              {isLoading ? <CircularProgress size={24} color="inherit" /> : "Login"}
+            </Button>
+          </Stack>
+
+          {/* Step 2: Add Divider with "--or--" */}
+          <Stack width={isSmall ? "80%" : "70%"} direction="row" alignItems="center" spacing={1} marginBottom="20px" sx={{ backgroundColor: "#FFECEC" }} >
+            <Divider sx={{ flexGrow: 1, backgroundColor: "#FFECEC" }} />
+            <Typography variant="body2" sx={{ backgroundColor: "#FFECEC", padding: "0 10px", color: "#000000" }}>
+              or
+            </Typography>
+            <Divider sx={{ flexGrow: 1, backgroundColor: "#FFECEC" }} />
+          </Stack>
+
+          {/* Step 3: Add Google and Facebook login buttons */}
+          <Stack width={isSmall ? "80%" : "70%"} spacing={2} marginBottom="20px" sx={{ backgroundColor: "#FFECEC" }}>
             <Button
               variant="outlined"
-              startIcon={<img src={googleIcon} alt="Google Icon" width={"20px"} height={"20px"}/>}
+              startIcon={<img src={googleIcon} alt="Google Icon" width={"20px"} height={"20px"} />}
               onClick={handleGoogleLogin}
               disableRipple
               sx={{ backgroundColor: "#fff", color: "#000", borderColor: "#ccc", ":hover": { backgroundColor: "#f1f1f1" } }}
@@ -269,36 +269,48 @@ export default function Login() {
 
             <Button
               variant="outlined"
-              startIcon={<img src={facebookIcon} alt="Facebook Icon" style={{color:"#3b5998"}} width={"20px"} height={"20px"} />}
+              startIcon={<img src={facebookIcon} alt="Facebook Icon" style={{ color: "#3b5998" }} width={"20px"} height={"20px"} />}
               onClick={handleFacebookLogin}
               disableRipple
               sx={{ backgroundColor: "#fff", color: "#3b5998", borderColor: "#3b5998", ":hover": { backgroundColor: "#f1f1f1" } }}
             >
               Login with Facebook
             </Button>
-            </Stack>
+          </Stack>
 
-      {/* Stack for the signup link */}
-      <Stack direction="row" alignItems="center" width={"100%"} justifyContent="center" marginTop={"2px"} sx={{backgroundColor:"#FFECEC"}}>
-        <Typography fontSize={"14px"} color="#000000" marginRight={"5px"} sx={{backgroundColor:"#FFECEC"}} >
-          Don't have an account?
-        </Typography>
-        <Typography
-          onClick={() => navigate("/signup")}
-          sx={{
-            fontSize: isSmall ? "12px" : "14px",
-            cursor: "pointer",
-            color: "blue",
-            textDecoration: "underline",
-            ":hover": { color: "darkblue" },
-            backgroundColor:"#FFECEC"
-          }}
-        >
-          Sign up
-        </Typography>
+          {/* Stack for the signup link */}
+          <Stack direction="row" alignItems="center" width={"100%"} justifyContent="center" marginTop={"2px"} sx={{ backgroundColor: "#FFECEC" }}>
+            <Typography fontSize={"14px"} color="#000000" marginRight={"5px"} sx={{ backgroundColor: "#FFECEC" }} >
+              Don't have an account?
+            </Typography>
+            <Typography
+              onClick={() => navigate("/signup")}
+              sx={{
+                fontSize: isSmall ? "12px" : "14px",
+                cursor: "pointer",
+                color: "blue",
+                textDecoration: "underline",
+                ":hover": { color: "darkblue" },
+                backgroundColor: "#FFECEC"
+              }}
+            >
+              Sign up
+            </Typography>
+          </Stack>
+          <Typography
+            onClick={() => navigate("/forgot-password")}
+            sx={{
+              fontSize: isSmall ? "12px" : "14px",
+              cursor: "pointer",
+              textDecoration: "underline",
+              ":hover": { color: "grey" },
+              backgroundColor: "#FFECEC"
+            }}
+          >
+            Forgot Password?
+          </Typography>
+        </Stack>
       </Stack>
-    </Stack>
-  </Stack>
-  </>
+    </>
   );
 }
