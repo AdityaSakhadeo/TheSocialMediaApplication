@@ -1,44 +1,34 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
 	TextField,
 	Button,
 	Typography,
 	Stack,
-	Divider,
-	CircularProgress,
 	Box,
-	Link,
 } from "@mui/material";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import TravelGram from "../assets/TravelGram.jpg";
-import loginImage from "../assets/login_image.jpeg";
-import googleIcon from "../assets/google-icon.png";
-import facebookIcon from "../assets/facebook-icon.png";
-import { useTheme } from '@mui/material/styles';
-import useMediaQuery from '@mui/material/useMediaQuery';
-import { useSelector, useDispatch } from "react-redux";
-import { setLoading } from "../redux/slices/loaderSlice";
 import "../styles/Login.css";
-import { RootState } from "../redux/store/store";
-
-
+import { useDispatch } from "react-redux";
+import { setLoading } from "../redux/slices/loaderSlice";
+import axios from "axios";
 
 export default function ResetPass() {
 	const [passwordCheck, setPasswordCheck] = useState({ oldpassword: "", newpassword: "", confirmed: "" })
 	const location = useLocation();
 	const queryParams = new URLSearchParams(location.search);
-
-	const isFromReset = queryParams.get("isFromReset") === "true";
+	const dispatch = useDispatch();
+	const isFromResetPage = queryParams.get("isFromReset") === "true";
 	const resetToken = queryParams.get("token");
 
 	const handleChange = (e: any) => {
-		console.log("Setting---", e.target.name)
 		const { name, value } = e.target;
 		setPasswordCheck({ ...passwordCheck, [name]: value })
 	};
 
+
 	const onResetPassword = async () => {
-		if (isFromReset) {
+		if (isFromResetPage) {
 			if (!passwordCheck.oldpassword) {
 				alert("old password is mandatory")
 			}
@@ -50,6 +40,27 @@ export default function ResetPass() {
 					confirmed: ""
 				}))
 			}
+
+			// try {
+			// 	dispatch(setLoading(true));
+			// 	const response = await axios.post<{ message: string }>(
+			// 		"http://localhost:4000/api/v1/users/reset-password",
+			// 		{
+			// 			type: "reset",
+			// 			userId: userInfo?.user?._id,
+			// 			oldpassword: passwordCheck.oldpassword,
+			// 			newpassword: passwordCheck.newpassword
+			// 		},
+			// 		{ withCredentials: true }
+			// 	);
+
+			// 	console.log("Response::::::", JSON.stringify(response))
+			// } catch (error) {
+
+			// }
+		}
+		else {
+				
 		}
 	}
 
@@ -90,7 +101,7 @@ export default function ResetPass() {
 						}}
 						alt="TravelGram Logo" />
 
-					{isFromReset && <>
+					{isFromResetPage && <>
 						<Typography
 							variant="h6"
 							fontSize={"15px"}
@@ -107,7 +118,7 @@ export default function ResetPass() {
 							variant="standard"
 							value={passwordCheck.oldpassword}
 							type="password"
-							placeholder="Enter New Password"
+							placeholder="Enter Old Password"
 							size='small'
 							color="primary"
 							//type={checkType(credentials.input) ? "email" : "username"}

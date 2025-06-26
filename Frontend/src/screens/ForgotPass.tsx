@@ -9,14 +9,11 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import TravelGram from "../assets/TravelGram.jpg";
-import { useTheme } from '@mui/material/styles';
 import { useSelector, useDispatch } from "react-redux";
 import { setLoading } from "../redux/slices/loaderSlice";
 import "../styles/Login.css";
 import { RootState } from "../redux/store/store";
 import axios, { AxiosError } from "axios";
-import MuiAlert, { AlertProps } from '@mui/material/Alert';
-import React from "react";
 import Loader from "../components/loader";
 
 
@@ -25,7 +22,6 @@ export default function ForgotPass() {
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
 	const isLoading = useSelector((state: RootState) => state.loader.isLoading);
-	const theme = useTheme();
 	const [email, setEmail] = useState("");
 
 	const handleChange = (e: any) => {
