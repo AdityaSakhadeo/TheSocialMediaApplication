@@ -6,6 +6,7 @@ import {
 	Stack,
 	Box,
 	Link,
+	AlertColor,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import TravelGram from "../assets/TravelGram.jpg";
@@ -15,6 +16,7 @@ import "../styles/Login.css";
 import { RootState } from "../redux/store/store";
 import axios, { AxiosError } from "axios";
 import Loader from "../components/loader";
+import CustomAlerts from "../components/AlertModal";
 
 
 export default function ForgotPass() {
@@ -22,6 +24,7 @@ export default function ForgotPass() {
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
 	const isLoading = useSelector((state: RootState) => state.loader.isLoading);
+	const [alertData, setAlertData] = useState<{ type: AlertColor; message: string } | null>(null)
 	const [email, setEmail] = useState("");
 
 	const handleChange = (e: any) => {
@@ -43,7 +46,9 @@ export default function ForgotPass() {
 				{ withCredentials: true }
 			);
 			dispatch(setLoading(false));
-			alert(response.data.message);
+			// alert(response.data.message);
+			setAlertData({ type: "success", message: response.data.message });
+			// <CustomAlerts type="success" message={response.data.message} />
 			navigate("/");
 		} catch (error) {
 			const err = error as AxiosError<{ message: string }>;
@@ -57,6 +62,9 @@ export default function ForgotPass() {
 
 	return (<>
 		{isLoading && <Loader />}
+		{alertData && (
+			<CustomAlerts type={alertData.type} message={alertData.message} />
+		)}
 		<Box display="flex" justifyContent="center" alignItems="center" height="100vh" width="100vw" bgcolor="#FFECEC">
 			<Stack
 				direction="column"

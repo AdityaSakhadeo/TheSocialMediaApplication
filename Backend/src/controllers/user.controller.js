@@ -491,7 +491,7 @@ export const resetPassword = asyncHandler(async (req, res) => {
       .json(new ApiResponse(400, null, "New Password is necessary field."));
   }
 
-  if (type == "forgot") {
+  if (type === "forgot") {
 
     if (!token) {
       return res
@@ -518,7 +518,7 @@ export const resetPassword = asyncHandler(async (req, res) => {
     return res.status(200).json(new ApiResponse(200, null, "Password reset successfully"));
   }
 
-  if (type == "reset") {
+  else if (type === "reset") {
 
     if (!userId && !oldPassword) {
       return res
@@ -535,6 +535,7 @@ export const resetPassword = asyncHandler(async (req, res) => {
     }
 
     const isMatch = await user.isPasswordCorrect(oldPassword);
+    console.log("is match",isMatch)
     if (!isMatch) {
       return res.status(401).json(new ApiResponse(401, null, "Old password is incorrect"));
     }
@@ -542,5 +543,9 @@ export const resetPassword = asyncHandler(async (req, res) => {
     user.password = newPassword;
     await user.save();
     return res.status(200).json(new ApiResponse(200, null, "Password changed successfully"));
+  }
+
+  else{
+  return res.status(400).json(new ApiResponse(400, null, "Invalid password reset type"));
   }
 })
