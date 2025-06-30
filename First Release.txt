@@ -1,0 +1,88 @@
+Features-
+🛠️ MVP Feature List (Version 1)
+1. User Authentication
+Signup/Login (Email, Phone, Username)
+
+JWT-based authentication with access & refresh tokens
+
+Forgot Password (basic flow)
+
+Edit profile (photo, name, username, etc.)
+
+2. Destination System
+Destination model with:
+
+Name
+
+Country
+
+Description
+
+Banner image
+
+Create & browse destinations
+
+Destination profile page (e.g., “Singapore” page showing all posts about Singapore)
+
+3. Post System
+Users can:
+
+Create a post under a specific destination
+
+Add images (max 5)
+
+Add a caption/review
+
+Tag things like cost, safety, accessibility (optional ratings)
+
+View posts per destination or all recent posts
+
+4. Engagement Features
+Like a post
+
+Follow/unfollow users
+
+View a user’s profile (with their posts and follower count)
+
+View who liked a post (optional)
+
+5. Feed & Discovery
+Home Feed:
+
+Posts from followed users
+
+Suggested users
+
+Destination Feed:
+
+All posts about that destination
+
+Average rating for safety, cost, etc. (optional)
+
+6. Search & Suggestions
+Search bar:
+
+By username
+
+By destination
+
+Suggested destinations and users (basic logic)
+
+7. Basic Admin Panel or Seeder
+For adding destinations and managing spam posts (optional for now, or handled manually)
+
+8. File Upload & Storage
+Use Cloudinary for:
+
+Profile pictures
+
+Post images
+
+📱 Optional Nice-to-Have (if time allows)
+Comments on posts
+
+Bookmark/Save post
+
+Destination filters (e.g., by region, popularity)
+
+Notifications (basic follow/like notification)

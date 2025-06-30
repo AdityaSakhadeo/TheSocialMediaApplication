@@ -1,15 +1,18 @@
-import React from 'react';
+import Alert from '@mui/material/Alert';
+import Stack from '@mui/material/Stack';
+import { AlertColor } from '@mui/material/Alert';
 
-interface ErrorMessageProps_I {
+interface OutlinedAlertsProps {
+  type: AlertColor; // "success" | "info" | "warning" | "error"
   message: string;
 }
 
-const ErrorMessage: React.FC<ErrorMessageProps_I> = (props) => {
+export default function CustomAlerts({ type, message }: OutlinedAlertsProps) {
   return (
-    <div style={{ color: 'red', fontSize: '14px' }}>
-      {props.message}
-    </div>
+    <Stack sx={{ width: '100%' }} spacing={2}>
+      <Alert variant="outlined" severity={type}>
+        {message}
+      </Alert>
+    </Stack>
   );
-};
-
-export default ErrorMessage;
+}

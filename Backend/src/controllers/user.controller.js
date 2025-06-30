@@ -3,6 +3,10 @@ import { ApiError } from "../utils/APIError.js";
 import { User } from "../models/userModel.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/APIResponse.js";
+import sendMail from "../Middleware/resetEmail.middleware.js";
+import dotenv from 'dotenv';
+import jwt from "jsonwebtoken";
+dotenv.config({ path: '../env' });
 /**
  * @description : Function to genrate the access and refresh token
  * @route : integrated function
@@ -14,7 +18,6 @@ const genrateAccessAndRefreshTokens = async (userId) => {
     const user = await User.findById(userId);
     const accessToken = user.genrateAccessToken();
     const refreshToken = user.genrateRefreshToken();
-
     user.refreshToken = refreshToken;
     await user.save({ validateBeforeSave: false });
     return { accessToken, refreshToken };
@@ -30,6 +33,7 @@ const genrateAccessAndRefreshTokens = async (userId) => {
  * @description : Function to register the user
  * @route : /api/v1/users/register
  * @access : Public
+ * @payload : {username}
  */
 
 export const registerUser = asyncHandler(async (req, res) => {
@@ -37,9 +41,9 @@ export const registerUser = asyncHandler(async (req, res) => {
 
   // Ensure either email or phone number is provided
   if (!email && !phoneNumber) {
-   return res
-   .status(400)
-   .json(new ApiResponse(400,null,"Please enter either Phone number or email address"))
+    return res
+      .status(400)
+      .json(new ApiResponse(400, null, "Please enter either Phone number or email address"))
   }
 
   // Sanitize inputs (make sure null values are handled correctly)
@@ -50,8 +54,8 @@ export const registerUser = asyncHandler(async (req, res) => {
   // Validate other required fields
   if ([username, fullName, password].some((field) => field?.trim() === "")) {
     return res
-    .status(200)
-    .json(new ApiResponse(400,null,"Please fill in all required fields"));
+      .status(200)
+      .json(new ApiResponse(400, null, "Please fill in all required fields"));
   }
 
   // Check if the username, email, or phone number already exists
@@ -65,18 +69,18 @@ export const registerUser = asyncHandler(async (req, res) => {
 
   if (existedUser) {
     return res
-    .status(400)
-    .json(new ApiResponse(400,null,"The user with this username already exists"));
+      .status(400)
+      .json(new ApiResponse(400, null, "The user with this username already exists"));
   }
   if (existedUserEmail) {
     return res
-    .status(400)
-    .json(new ApiResponse(400,null,"The user with this email already exists"));
+      .status(400)
+      .json(new ApiResponse(400, null, "The user with this email already exists"));
   }
   if (existedUserPhoneNumber) {
     return res
-    .status(400)
-    .json(new ApiResponse(400,null,"The user with this phone number already exists"));
+      .status(400)
+      .json(new ApiResponse(400, null, "The user with this phone number already exists"));
   }
 
 
@@ -96,8 +100,8 @@ export const registerUser = asyncHandler(async (req, res) => {
 
     if (!createdUser) {
       return res
-      .status(500)
-      .json(new ApiResponse(500,null,"Server error while creating the new user"));
+        .status(500)
+        .json(new ApiResponse(500, null, "Server error while creating the new user"));
     }
 
     return res
@@ -315,8 +319,8 @@ export const editProfile = asyncHandler(async (req, res) => {
       user.profileImage = profilePhoto.url;
       await user.save({ validateBeforeSave: false });
       return res
-      .status(200)
-      .json(new ApiResponse(200, profilePhoto.url, "Profile Photo updated successfully"));
+        .status(200)
+        .json(new ApiResponse(200, profilePhoto.url, "Profile Photo updated successfully"));
     default:
       break;
   }
@@ -379,45 +383,6 @@ export const getUserProfile = asyncHandler(async (req, res) => {
 });
 
 /**
- * @description : Control flow used for following the user
- * @route : /api/v1/users/follow
- * @access : Private
- */
-
-export const followUser = asyncHandler(async (req, res) => {
-  const { currentUserId, targetUserId } = req.body;
-
-  const targetUser = await User.findById(targetUserId);
-  const currentUser = await User.findById(currentUserId);
-
-  if (!targetUser) {
-    return res.status(404).json(new ApiResponse(404, null, "User not found"));
-  }
-
-  if (targetUserId.toString() === currentUserId.toString()) {
-    return res
-      .status(400)
-      .json(new ApiResponse(400, null, "You cannot follow yourself!"));
-  }
-
-  if (targetUser.followers.includes(currentUserId)) {
-    return res
-      .status(400)
-      .json(new ApiResponse(400, null, "You are already following the user"));
-  }
-
-  targetUser.followers.push(currentUserId);
-  currentUser.followedPeople.push(targetUserId);
-
-  await currentUser.save({ validateBeforeSave: false });
-  await targetUser.save({ validateBeforeSave: false });
-
-  return res
-    .status(200)
-    .json(new ApiResponse(200, null, "User followed successfully"));
-});
-
-/**
  * @description : Function to get the data of the suggested users
  * @route : /api/v1/users/getUserSuggestion
  * @access : Private
@@ -450,7 +415,7 @@ export const suggestRelevantUsers = asyncHandler(async (req, res) => {
   }
 
   suggestedUsers = suggestedUsers.filter(user => user._id.toString() !== currentUserId);
-  
+
   return res
     .status(200)
     .json(
@@ -462,3 +427,125 @@ export const suggestRelevantUsers = asyncHandler(async (req, res) => {
     );
 });
 
+
+
+/**
+ * @description :forgot password
+ * @route : /api/v1/users/forgot-password
+ * @access : Private
+ * @payload : {email:"abc@gmail.com"} 
+ */
+export const forgotPassword = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).json(new ApiResponse(400, null, "Email is required."));
+  }
+
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    return res.status(404).json(new ApiResponse(404, null, "User with this email not found."));
+  }
+
+  const resetToken = jwt.sign(
+    { userId: user._id },
+    process.env.RESET_TOKEN,
+    { expiresIn: "15m" }
+  );
+
+  const resetLink = `${process.env.RESET_PASSWORD_URL}?token=${resetToken}&isFromReset=false`;
+
+  await sendMail({
+    to: user.email,
+    subject: "Password Reset Request",
+    html: `
+      <h3>TravelGram-Reset your password</h3>
+      <p>Click the link below to reset your password. This link is valid for 15 minutes:</p>
+      <a href="${resetLink}">${resetLink}</a>
+    `,
+  });
+
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      resetToken,
+      "Password reset link has been sent to your registered email address"
+    )
+  );
+});
+
+/**
+ * @description : API to reset the password
+ * @route : /api/v1/users/reset-password
+ * @access : Private
+ * @payload : {"type":"forgot","token:"token","newPassword":"examplepassword"} // type : "forgot" 
+ * @payload : {"type":"reset","userId":"userId","oldPassword":"examplepassword","newPassword":"examplepassword"} // type : "reset" 
+ */
+export const resetPassword = asyncHandler(async (req, res) => {
+  const { type, token, userId, oldPassword, newPassword } = req.body;
+
+  if (!newPassword) {
+    return res
+      .status(400)
+      .json(new ApiResponse(400, null, "New Password is necessary field."));
+  }
+
+  if (type === "forgot") {
+
+    if (!token) {
+      return res
+        .status(400)
+        .json(new ApiResponse(400, null, "Token is required"))
+    }
+
+    let decoded;
+    try {
+      decoded = jwt.verify(token, process.env.RESET_TOKEN);
+    } catch (err) {
+      return res.status(400).json(new ApiResponse(400, null, "Invalid or expired token"));
+    }
+
+    const user = await User.findById(decoded.userId);
+    if (!user) {
+      return res
+        .status(404)
+        .json(new ApiResponse(404, null, "User not found."))
+    }
+
+    user.password = newPassword;
+    await user.save();
+    return res.status(200).json(new ApiResponse(200, null, "Password reset successfully"));
+  }
+
+  else if (type === "reset") {
+
+    if (!userId && !oldPassword) {
+      return res
+        .status(400)
+        .json(new ApiResponse(400, null, "UserId and oldpassword is required."))
+    }
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res
+        .status(404)
+        .json(new ApiResponse(404, null, "User not found."))
+    }
+
+    const isMatch = await user.isPasswordCorrect(oldPassword);
+    console.log("is match",isMatch)
+    if (!isMatch) {
+      return res.status(401).json(new ApiResponse(401, null, "Old password is incorrect"));
+    }
+
+    user.password = newPassword;
+    await user.save();
+    return res.status(200).json(new ApiResponse(200, null, "Password changed successfully"));
+  }
+
+  else{
+  return res.status(400).json(new ApiResponse(400, null, "Invalid password reset type"));
+  }
+})

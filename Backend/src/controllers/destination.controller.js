@@ -2,7 +2,7 @@ import Destination from "../models/destinationModel.js";
 import { ApiResponse } from "../utils/APIResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 /**
- * @description : Function to create new destination
+ * @description : API to create new destination
  * @route : /api/v1/destinations/createDestination
  * @access : Private
  */

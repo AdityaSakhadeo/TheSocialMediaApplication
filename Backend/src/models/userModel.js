@@ -14,6 +14,12 @@ const userSchema = new Schema(
       unique: true,
       index: true,
       lowercase: true,
+      validate: {
+        validator: function (value) {
+          return !/\s/.test(value); // Checking for spaces
+        },
+        message: "Username cannot contain spaces.",
+      },
     },
     password: {
       type: String,
