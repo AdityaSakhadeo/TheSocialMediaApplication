@@ -16,6 +16,7 @@ import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useSelector, useDispatch } from "react-redux";
 import { setLoading } from "../redux/slices/loaderSlice";
+import { apiCaller } from "../redux/utils/apiCaller";
 import "../styles/Login.css";
 import { RootState } from "../redux/store/store";
 import Loader from '../components/loader'
@@ -61,58 +62,47 @@ export default function Login() {
   const [errors, setErrors] = useState({ input: false, password: false });
   const [errorMessage, setErrorMessage] = useState<string | null>(null);  // New state for displaying error messages
 
+const handleLogin = async (e: any) => {
+  e.preventDefault();
+  dispatch(setLoading(true));
+  setPasswordError(false);
+  setErrors({ input: false, password: false });
+  setErrorMessage(null);
 
-  const handleLogin = async (e: any) => {
-    e.preventDefault();
-    dispatch(setLoading(true));
-    setPasswordError(false);
-    // Reset error states
-    setErrors({ input: false, password: false });
-    setErrorMessage(null);
+  // Set login type based on input
+  if (credentials.input.includes('@')) {
+    credentials.logintype = "email";
+  } else if (/^\d+$/.test(credentials.input)) {
+    credentials.logintype = "phoneNumber";
+  } else {
+    credentials.logintype = "username";
+  }
 
-    if (credentials.input.includes('@')) {
-      credentials.logintype = "email";
-    }
-    else if (/^\d+$/.test(credentials.input)) {
-      credentials.logintype = "phoneNumber";
-    }
-    else {
-      credentials.logintype = "username"
-    }
-    try {
-      const response = await fetch("http://localhost:4000/api/v1/users/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(credentials),
-      });
+  try {
+    const result = await apiCaller({
+      method: "POST",
+      url: "http://localhost:4000/api/v1/users/login",
+      data: credentials,
+      showLoading: false // we handle loading manually
+    });
 
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-      dispatch(setLoading(false));
-      const result = await response.json();
-      // console.log("result", result);
-
-      if (result.success) {
-        localStorage.setItem("userInformation", JSON.stringify(result.data));
-        localStorage.setItem("token", JSON.stringify(result.data.accessToken));
-        navigate("/home");
-      } else {
-        setPasswordError(true);
-        setErrors({ input: true, password: true });
-        setErrorMessage("Invalid credentials. Please try again.");
-      }
-    } catch (error) {
-      console.error("There was a problem with the fetch operation:", error);
-      setErrorMessage("Invalid credentials. Please try again.");
+    if (result.success) {
+      localStorage.setItem("userInformation", JSON.stringify(result.data));
+      localStorage.setItem("token", JSON.stringify(result.data.accessToken));
+      navigate("/home");
+    } else {
+      setPasswordError(true);
       setErrors({ input: true, password: true });
-      dispatch(setLoading(false));
-    } finally {
-      dispatch(setLoading(false));
+      setErrorMessage("Invalid credentials. Please try again.");
     }
-  };
+  } catch (error: any) {
+    console.error("There was a problem with the API call:", error);
+    setErrorMessage("Invalid credentials. Please try again.");
+    setErrors({ input: true, password: true });
+  } finally {
+    dispatch(setLoading(false));
+  }
+};
 
   const handleGoogleLogin = async () => {
     try {
