@@ -1,16 +1,34 @@
 import Alert from '@mui/material/Alert';
 import Stack from '@mui/material/Stack';
-import { AlertColor } from '@mui/material/Alert';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from '../redux/store/store';
+import { useEffect } from 'react';
+import { clearAlert } from '../redux/slices/alertSlice';
 
-interface OutlinedAlertsProps {
-  type: AlertColor; // "success" | "info" | "warning" | "error"
-  message: string;
-}
+export default function CustomAlerts() {
+  const { type, message } = useSelector((state: RootState) => state.alert);
+  const dispatch = useDispatch();
 
-export default function CustomAlerts({ type, message }: OutlinedAlertsProps) {
+  useEffect(() => {
+    if (type) {
+      const timer = setTimeout(() => {
+        dispatch(clearAlert());
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [type]);
+
+  if (!type || !message) return null;
+
   return (
-    <Stack sx={{ width: '100%' }} spacing={2}>
-      <Alert variant="outlined" severity={type}>
+    <Stack
+      sx={{
+        position:"fixed",
+        alignItems:"flex-end"
+      }}
+    >
+      <Alert severity={type}>
         {message}
       </Alert>
     </Stack>

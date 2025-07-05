@@ -17,7 +17,7 @@ import { RootState } from "../redux/store/store";
 import axios, { AxiosError } from "axios";
 import Loader from "../components/loader";
 import CustomAlerts from "../components/AlertModal";
-
+import { showAlert } from '../redux/slices/alertSlice';
 
 export default function ForgotPass() {
 
@@ -47,9 +47,11 @@ export default function ForgotPass() {
 			);
 			dispatch(setLoading(false));
 			// alert(response.data.message);
-			setAlertData({ type: "success", message: response.data.message });
-			// <CustomAlerts type="success" message={response.data.message} />
+			// setAlertData({ type: "success", message: response.data.message });
+			dispatch(showAlert({ type: "success", message: response.data.message }));
+
 			navigate("/");
+
 		} catch (error) {
 			const err = error as AxiosError<{ message: string }>;
 			alert(err.response?.data?.message || "Something went wrong.");
@@ -62,9 +64,7 @@ export default function ForgotPass() {
 
 	return (<>
 		{isLoading && <Loader />}
-		{alertData && (
-			<CustomAlerts type={alertData.type} message={alertData.message} />
-		)}
+		{/* {alertData && <CustomAlerts type={alertData.type} message={alertData.message} />} */}
 		<Box display="flex" justifyContent="center" alignItems="center" height="100vh" width="100vw" bgcolor="#FFECEC">
 			<Stack
 				direction="column"
