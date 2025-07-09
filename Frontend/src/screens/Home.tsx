@@ -20,6 +20,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import defaultProfileImage from "../assets/defaultProfileImage.png";
 import Ronaldo from "../assets/ronaldo.jpeg"
+import Ronaldo2 from '../assets/ronaldo2.jpeg'
 import axios from "axios"; 
 import PostCard from "../components/PostCard";
 
@@ -70,7 +71,19 @@ export default function Home() {
     comments: ["Nice shot!", "Haha relatable", "Foosball is serious business"],
     totalStars: 45,
     owner: {
-      username: "Chirstiano Ronaldo",
+      username: userData?.user?.username,
+      profileImage: profileImage, // dummy profile image
+    },
+  },
+    {
+    postId: 1,
+    image: Ronaldo2, // dummy image
+    caption: "119 anos a orgulhar Portugal 🦁 Parabéns, meu @SportingCP",
+    likes: 12200,
+    comments: ["Nice shot!", "Haha relatable", "Foosball is serious business"],
+    totalStars: 70,
+    owner: {
+      username: userData?.user?.username,
       profileImage: profileImage, // dummy profile image
     },
   },
@@ -351,38 +364,7 @@ export default function Home() {
       {/* Bottom Navigation for small screens */}
       {isSmall && (
         <>
-          <Stack
-            sx={{
-              flexGrow: 1,
-              padding: 2,
-              overflowY: "scroll",
-            }}
-          >
-            {/* Display Posts */}
-            {posts.length > 0 ? (
-              posts.map((post) => (
-                <Stack key={post.postId} spacing={2} sx={{ marginBottom: 3 }}>
-                  <img
-                    src={post.image}
-                    alt="Post"
-                    style={{
-                      width: "100%",
-                      height: "auto",
-                      borderRadius: "10px",
-                    }}
-                  />
-                  <Typography variant="body1">{post.caption}</Typography>
-                  <Stack direction="row" justifyContent="space-between">
-                    <Typography>Likes: {post.likes}</Typography>
-                    <Typography>Comments: {post.comments.length}</Typography>
-                    <Typography>Total Stars: {post.totalStars}</Typography>
-                  </Stack>
-                </Stack>
-              ))
-            ) : (
-              <Typography>No posts to display</Typography>
-            )}
-          </Stack>
+          <PostCard posts={dummyPosts}/>
           <BottomNavigation
             showLabels
             value={value}
