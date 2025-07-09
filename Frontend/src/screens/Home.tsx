@@ -19,7 +19,9 @@ import {
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import defaultProfileImage from "../assets/defaultProfileImage.png";
+import Ronaldo from "../assets/ronaldo.jpeg"
 import axios from "axios"; 
+import PostCard from "../components/PostCard";
 
 interface User {
   id: number;
@@ -58,6 +60,22 @@ export default function Home() {
   const [value, setValue] = useState(0);
   const [suggestedUsers, setSuggestedUsers] = useState([] as User[]);
   const [posts, setPosts] = useState([] as Post[]); // State to hold posts
+
+  const dummyPosts = [
+  {
+    postId: 1,
+    image: Ronaldo, // dummy image
+    caption: "I lost a foosball game after this 😅",
+    likes: 1700,
+    comments: ["Nice shot!", "Haha relatable", "Foosball is serious business"],
+    totalStars: 45,
+    owner: {
+      username: "Chirstiano Ronaldo",
+      profileImage: profileImage, // dummy profile image
+    },
+  },
+];
+
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -245,42 +263,7 @@ export default function Home() {
           </Drawer>
 
           {/* Main Content */}
-          <Stack
-            sx={{
-              width: isMid ? "calc(100vw - 80px)" : "calc(100vw - 20%)",
-              height: "100%",
-              overflowY: "scroll",
-              padding: 2,
-            }}
-          >
-            {/* Display Posts */}
-            {posts.length > 0 ? (
-              posts.map((post) => (
-                <Stack key={post.postId} spacing={2} sx={{ marginBottom: 3 }}>
-                  <img
-                    src={post.image}
-                    alt="Post"
-                    style={{
-                      width: "100%",
-                      height: "auto",
-                      borderRadius: "10px",
-                    }}
-                  />
-                  <Typography variant="body1">{post.caption}</Typography>
-                  <Stack direction="row" justifyContent="space-between">
-                    <Typography>Likes: {post.likes}</Typography>
-                    <Typography>Comments: {post.comments.length}</Typography>
-                    <Typography>Total Stars: {post.totalStars}</Typography>
-                  </Stack>
-                </Stack>
-              ))
-            ) : (
-              console.log("No posts to show"),
-              <Typography
-              sx={{fontSize:"20px", color: "black" }}
-              >No posts to display</Typography>
-            )}
-          </Stack>
+          <PostCard posts={dummyPosts}/>
 
           {/* Profile and Suggested Users on the Right Side */}
           <Stack

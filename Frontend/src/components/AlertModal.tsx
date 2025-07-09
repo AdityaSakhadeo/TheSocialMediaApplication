@@ -13,7 +13,7 @@ export default function CustomAlerts() {
     if (type) {
       const timer = setTimeout(() => {
         dispatch(clearAlert());
-      }, 3000);
+      }, 30000);
 
       return () => clearTimeout(timer);
     }
