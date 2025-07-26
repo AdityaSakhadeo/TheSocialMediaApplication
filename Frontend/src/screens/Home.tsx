@@ -60,31 +60,31 @@ export default function Home() {
   const [moreOptionsOpen, setMoreOptionsOpen] = useState(false);
   const [value, setValue] = useState(0);
   const [suggestedUsers, setSuggestedUsers] = useState([] as User[]);
-  const [posts, setPosts] = useState([] as Post[]); // State to hold posts
+  const [posts, setPosts] = useState([] as Post[]); 
 
   const dummyPosts = [
   {
     postId: 1,
-    image: Ronaldo, // dummy image
+    image: Ronaldo, 
     caption: "I lost a foosball game after this 😅",
     likes: 1700,
     comments: ["Nice shot!", "Haha relatable", "Foosball is serious business"],
     totalStars: 45,
     owner: {
       username: userData?.user?.username,
-      profileImage: profileImage, // dummy profile image
+      profileImage: profileImage, 
     },
   },
     {
     postId: 1,
-    image: Ronaldo2, // dummy image
+    image: Ronaldo2, 
     caption: "119 anos a orgulhar Portugal 🦁 Parabéns, meu @SportingCP",
     likes: 12200,
     comments: ["Nice shot!", "Haha relatable", "Foosball is serious business"],
     totalStars: 70,
     owner: {
       username: userData?.user?.username,
-      profileImage: profileImage, // dummy profile image
+      profileImage: profileImage, 
     },
   },
 ];
@@ -102,9 +102,9 @@ export default function Home() {
               currentUserId,
             },
           });
-          const users = response?.data?.data; // Store the full user object
+          const users = response?.data?.data; 
           console.log(users, "Suggested Users Response");
-          setSuggestedUsers(users); // Set the entire user object
+          setSuggestedUsers(users); 
         } catch (error) {
           console.error("Failed to fetch user suggestions:", error);
         }
@@ -140,7 +140,7 @@ export default function Home() {
         height: "100%",
         justifyContent: "left",
         alignItems: "center",
-        backgroundColor: "#f8f9fa",
+        // backgroundColor: "inherit",
         padding: 2,
         paddingTop: 4,
       }}
@@ -151,13 +151,13 @@ export default function Home() {
         sx={{
           justifyContent: isMid ? "center" : "flex-start",
           marginBottom: 2,
-          color: "black",
+          color: theme.palette.text.primary,
         }}
         onClick={() => window.location.reload()}
       >
-        <HomeIcon fontSize="large" sx={{ color: "black" }} />
+        <HomeIcon fontSize="large" sx={{ color: theme.palette.text.primary }} />
         {!isMid && (
-          <Typography marginLeft={2} sx={{ color: "black" }}>
+          <Typography marginLeft={2} sx={{ color: theme.palette.text.primary }}>
             Home
           </Typography>
         )}
@@ -168,13 +168,13 @@ export default function Home() {
         sx={{
           justifyContent: isMid ? "center" : "flex-start",
           marginBottom: 2,
-          color: "black",
+          color: theme.palette.text.primary,
         }}
         onClick={() => navigate("/search")}
       >
-        <Search fontSize="large" sx={{ color: "black" }} />
+        <Search fontSize="large" sx={{ color: theme.palette.text.primary }} />
         {!isMid && (
-          <Typography marginLeft={2} sx={{ color: "black" }}>
+          <Typography marginLeft={2} sx={{ color: theme.palette.text.primary }}>
             Search
           </Typography>
         )}
@@ -185,13 +185,13 @@ export default function Home() {
         sx={{
           justifyContent: isMid ? "center" : "flex-start",
           marginBottom: 2,
-          color: "black",
+          color: theme.palette.text.primary,
         }}
         onClick={() => navigate("/messages")}
       >
-        <Message fontSize="large" sx={{ color: "black" }} />
+        <Message fontSize="large" sx={{ color: theme.palette.text.primary }} />
         {!isMid && (
-          <Typography marginLeft={2} sx={{ color: "black" }}>
+          <Typography marginLeft={2} sx={{ color: theme.palette.text.primary }}>
             Messages
           </Typography>
         )}
@@ -202,13 +202,13 @@ export default function Home() {
         sx={{
           justifyContent: isMid ? "center" : "flex-start",
           marginBottom: 2,
-          color: "black",
+          color: theme.palette.text.primary,
         }}
         onClick={() => setMoreOptionsOpen(!moreOptionsOpen)}
       >
-        <MoreHoriz fontSize="large" sx={{ color: "black" }} />
+        <MoreHoriz fontSize="large" sx={{ color: theme.palette.text.primary }} />
         {!isMid && (
-          <Typography marginLeft={2} sx={{ color: "black" }}>
+          <Typography marginLeft={2} sx={{ color: theme.palette.text.primary }}>
             More Options
           </Typography>
         )}
@@ -221,14 +221,14 @@ export default function Home() {
             sx={{
               justifyContent: isMid ? "center" : "flex-start",
               marginBottom: 2,
-              color: "black",
+              color: theme.palette.text.primary,
             }}
             onClick={() => {
               localStorage.removeItem("token");
               navigate("/");
             }}
           >
-            <Typography sx={{ color: "black" }}>Logout</Typography>
+            <Typography sx={{ color: theme.palette.text.primary }}>Logout</Typography>
           </Button>
           <Button
             fullWidth
@@ -236,13 +236,13 @@ export default function Home() {
             sx={{
               justifyContent: isMid ? "center" : "flex-start",
               marginBottom: 2,
-              color: "black",
+              color: theme.palette.text.primary,
             }}
             onClick={() => navigate("/settings")}
           >
-            <Settings fontSize="large" sx={{ color: "black" }} />
+            <Settings fontSize="large" sx={{ color: theme.palette.text.primary }} />
             {!isMid && (
-              <Typography marginLeft={2} sx={{ color: "black" }}>
+              <Typography marginLeft={2} sx={{ color: theme.palette.text.primary }}>
                 Settings
               </Typography>
             )}
@@ -255,7 +255,7 @@ export default function Home() {
   return (
     <Stack
       width={"100vw"}
-      height={"100vh"}
+      height={"100%"}
       direction={isSmall ? "column" : "row"}
     >
       {/* Drawer for large and medium screens */}
@@ -307,7 +307,7 @@ export default function Home() {
                 style={{ width: "100%", borderRadius: "50%" }}
               />
             </IconButton>
-            {!isMid && <Typography marginTop={1} sx={{color:"black", justifyContent:"flex-end", 
+            {!isMid && <Typography marginTop={1} sx={{color:theme.palette.text.primary, justifyContent:"flex-end", 
               right:0
             }}>{userData.user.username}</Typography>}
           </Stack>
@@ -324,7 +324,7 @@ export default function Home() {
             justifyContent: "space-between",
           }}
         >
-          <Typography variant="h6" sx={{ color: "black", justifyContent:"flex-end" }}>
+          <Typography variant="h6" sx={{ color: theme.palette.text.primary, justifyContent:"flex-end" }}>
             Suggested Users
           </Typography>
           {suggestedUsers.length > 0 ? (
@@ -339,10 +339,10 @@ export default function Home() {
                   style={{ width: 50, height: 50, borderRadius: "50%" }}
                 />
                 <Typography  
-                sx={{ color: "black",  
+                sx={{ color: theme.palette.text.primary,  
                       width:"150px",
                       ":hover": {
-                        color: "blue",
+                        color: theme.palette.primary.main,
                         cursor: "pointer",
                       },
                       textAlign:'center'

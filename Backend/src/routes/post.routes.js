@@ -6,8 +6,8 @@ const router = Router();
 router.route("/createPost").post(
     upload.fields([
         {
-            name:"image",
-            maxCount:1
+            name:"images",
+            maxCount:5
         }
     ]),
     createPost);

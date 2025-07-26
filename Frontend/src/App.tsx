@@ -20,7 +20,6 @@ export default function App() {
 
   return (
     <>
-      {/* <CustomAlerts /> */}
       <Provider store={store} >
         <Router>
           <CustomAlerts />

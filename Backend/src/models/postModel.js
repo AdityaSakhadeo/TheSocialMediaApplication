@@ -4,7 +4,7 @@ const postSchema = new Schema(
   {
     owner: {//
       type: Schema.Types.ObjectId,
-      ref: "posts",
+      ref: "users",
     },
     safety: {//
       type: Number,
@@ -31,7 +31,7 @@ const postSchema = new Schema(
       default: 0,
     },
     image: {//
-      type: String,
+      type: [String],
     },
     caption: {//
       type: String,

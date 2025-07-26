@@ -1,5 +1,6 @@
 import { Stack, Typography } from "@mui/material";
 import defaultProfileImage from "../assets/defaultProfileImage.png";
+import { useNavigate } from "react-router-dom";
 
 interface Post {
   postId: number;
@@ -19,6 +20,7 @@ interface PostCardProps {
 }
 
 export default function PostCard({ posts }: PostCardProps) {
+  const navigate = useNavigate();
   return (
     <Stack
       sx={{
@@ -36,7 +38,7 @@ export default function PostCard({ posts }: PostCardProps) {
             key={post.postId}
             spacing={2}
             sx={{
-              backgroundColor: "#fff",
+              // backgroundColor: "#fff",
               padding: 2,
               borderRadius: "8px",
               marginBottom: 3,
@@ -44,7 +46,7 @@ export default function PostCard({ posts }: PostCardProps) {
             }}
           >
             {/* Post Owner Info */}
-            <Stack direction="row" spacing={2} alignItems="center">
+            <Stack direction="row" spacing={2} alignItems="center" onClick={()=>navigate("/profile")} sx={{cursor:"pointer"}}>
               <img
                 src={post.owner.profileImage || defaultProfileImage}
                 alt="Owner"
@@ -55,7 +57,7 @@ export default function PostCard({ posts }: PostCardProps) {
                   objectFit: "cover",
                 }}
               />
-              <Typography fontWeight="bold">{post.owner.username}</Typography>
+              <Typography fontWeight="bold" >{post.owner.username}</Typography>
             </Stack>
 
             {/* Post Image */}
