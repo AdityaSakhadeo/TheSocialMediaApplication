@@ -86,3 +86,4 @@ Bookmark/Save post
 Destination filters (e.g., by region, popularity)
 
 Notifications (basic follow/like notification)
+In get destination API we can fetch all the posts for that particular destination and can cound the stars given by the users and show it on the destination page.

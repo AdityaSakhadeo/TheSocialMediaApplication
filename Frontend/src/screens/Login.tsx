@@ -20,6 +20,7 @@ import { apiCaller } from "../redux/utils/apiCaller";
 import "../styles/Login.css";
 import { RootState } from "../redux/store/store";
 import Loader from '../components/loader'
+import { showAlert } from "../redux/slices/alertSlice";
 
 
 
@@ -110,7 +111,8 @@ const handleLogin = async (e: any) => {
       window.location.href = googleLoginUrl;
     } catch (error) {
       console.error("There was a problem with the fetch operation:", error);
-      alert("An error occurred. Please try again.");
+      // alert("An error occurred. Please try again.");
+      dispatch(showAlert({ type: "success", message: 'An error occurred. Please try again.' }));
     }
   };
 
@@ -120,7 +122,7 @@ const handleLogin = async (e: any) => {
       window.location.href = facebookLoginUrl;
     } catch (error) {
       console.error("There was a problem with the fetch operation:", error);
-      alert("An error occurred. Please try again.");
+      // alert("An error occurred. Please try again.");
     }
   };
 

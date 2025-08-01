@@ -14,6 +14,7 @@ import { setLoading } from "../redux/slices/loaderSlice";
 import axios from "axios";
 import Loader from "../components/loader";
 import { RootState } from "../redux/store/store";
+import { showAlert } from "../redux/slices/alertSlice";
 
 
 export default function ResetPass() {
@@ -35,10 +36,12 @@ export default function ResetPass() {
 	const onResetPassword = async () => {
 		if (isFromResetPage) {
 			if (!passwordCheck.oldpassword) {
-				alert("old password is mandatory")
+				// alert("old password is mandatory")
+				dispatch(showAlert({ type: "warning", message: 'Old password is mandatory' }));
 			}
 			if (!(passwordCheck.newpassword === passwordCheck.confirmed)) {
-				alert("New and confirmed passwords do not match")
+				// alert("New and confirmed passwords do not match")
+				dispatch(showAlert({ type: "warning", message: 'New and confirmed passwords do not match' }));
 				setPasswordCheck(prev => ({
 					...prev,
 					newpassword: "",
@@ -69,7 +72,8 @@ export default function ResetPass() {
 		}
 		else {
 			if (!(passwordCheck.newpassword === passwordCheck.confirmed)) {
-				alert("New and confirmed passwords do not match")
+				// alert("New and confirmed passwords do not match")
+				dispatch(showAlert({ type: "warning", message: 'New and confirmed passwords do not match' }));
 				setPasswordCheck(prev => ({
 					...prev,
 					newpassword: "",
@@ -94,7 +98,7 @@ export default function ResetPass() {
 					{ withCredentials: true }
 				);
 				dispatch(setLoading(false))
-				navigate("/");
+				// navigate("/");
 				console.log("Response::::::", JSON.stringify(response))
 			} catch (error) {
 				dispatch(setLoading(false))
