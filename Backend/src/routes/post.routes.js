@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { upload } from "../Middleware/multer.middleware.js";
-import { createPost } from "../controllers/post.controller.js";
+import { createPost, showFeed } from "../controllers/post.controller.js";
 const router = Router();
 
 router.route("/createPost").post(
@@ -11,5 +11,7 @@ router.route("/createPost").post(
         }
     ]),
     createPost);
+
+router.route("/feed/:userId").get(showFeed);
 
 export default router;

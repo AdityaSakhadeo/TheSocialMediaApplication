@@ -43,7 +43,7 @@ const postSchema = new Schema(
     },
     destination: {//
       type: Schema.Types.ObjectId,
-      ref: "Destination",
+      ref: "destinations",
       required: true,
     },
     isPublished: {

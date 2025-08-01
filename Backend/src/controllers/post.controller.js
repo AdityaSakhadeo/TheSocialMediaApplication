@@ -30,7 +30,7 @@ export const createPost = asyncHandler(async (req, res) => {
       .json(new ApiResponse(400, null, "User not found"));
   }
 
-  
+
 
   const currentDestination = await Destination.findOne({ name: destination.toLowerCase() });
   console.log("currentDestination:::::::::::::::::::::::::::::", currentDestination._id)
@@ -42,7 +42,7 @@ export const createPost = asyncHandler(async (req, res) => {
   }
 
   // const selectedPoint = currentDestination.points.find(p => p.name.toLowerCase() === point.toLowerCase())
-    const selectedPoint = currentDestination.points.find(p => p.name.toLowerCase() === point.toLowerCase());
+  const selectedPoint = currentDestination.points.find(p => p.name.toLowerCase() === point.toLowerCase());
   if (!selectedPoint) {
     return res
       .status(400)
@@ -68,9 +68,9 @@ export const createPost = asyncHandler(async (req, res) => {
 
   const imageUrls = uploadedImages.map(img => img.url);
 
-  
+
   const body = {
-    owner: currentUserId, 
+    owner: currentUserId,
     safety,
     accessibility,
     cost,
@@ -86,7 +86,7 @@ export const createPost = asyncHandler(async (req, res) => {
   try {
     // Create a new post using the validated fields and uploaded image URL
     const post = await Post.create({
-      owner: currentUser._id, 
+      owner: currentUser._id,
       safety,
       accessibility,
       cost,
@@ -104,8 +104,8 @@ export const createPost = asyncHandler(async (req, res) => {
   } catch (error) {
     // Check for validation errors and extract messages
     if (error.name === "ValidationError") {
-      const messages = Object.values(error.errors).map(err => err.message); 
-      return res.status(400).json(new ApiResponse(400, "", messages)); 
+      const messages = Object.values(error.errors).map(err => err.message);
+      return res.status(400).json(new ApiResponse(400, "", messages));
     }
     // Throw a generic server error if something else goes wrong
     throw new ApiError(500, "Server Error");
@@ -115,6 +115,81 @@ export const createPost = asyncHandler(async (req, res) => {
 
 /**
  * @description : Return posts for the particular user
+ * @route : /api/v1/posts/feed/:userId
+ * @access : Private
  */
 
+export const showFeed = asyncHandler(async (req, res) => {
+  const { userId } = req.params;
 
+  const user = await User.findById(userId);
+
+  if (!user) {
+    return res
+      .status(400)
+      .json(new ApiResponse(200, null, "user not found"))
+  }
+
+  const followedUsers = user.followedPeople || [];
+  const followedDestinations = user.followedPages ? user.followedPages : [];
+
+  const userPosts = await Post.find({
+    owner: { $in: [...followedUsers, user._id] },
+    isPublished: true,
+  })
+    .populate("owner", "username profileImage")
+    .populate({
+      path: 'destination',
+      select: 'name destinationImages points',
+      populate: {
+        path: 'points',
+        select: 'name'
+      },
+    }).populate("destination")
+    .sort({ createdAt: -1 });
+
+  // Get posts made under followed destinations
+  const destinationPosts = await Post.find({
+    destination: { $in: followedDestinations },
+    isPublished: true,
+  })
+    .populate("owner", "username profileImage")
+    .populate({
+      path: 'destination',
+      select: 'name destinationImages points',
+      populate: {
+        path: 'points',
+        select: 'name'
+      },
+    })
+    .sort({ createdAt: -1 });
+
+
+  // const feed = await Post.find({
+  //   $or:[
+  //     {owner: {$in:[...followedUsers,user._id]}},
+  //     {destination : {$in:followedDestinations}}
+  //   ]
+  // }).populate("owner",'username profileImage')
+  //   .populate({
+  //     path:'destination',
+  //     select:'name destinationImages points',
+  //     populate:{
+  //       path:'points',
+  //       select:'name'
+  //     },
+  //   })
+  //   .sort({createdAt:-1})
+
+  // console.log("feed::::::",JSON.stringify(feed))
+
+  const feed = {
+    userPosts: userPosts,
+    destinationPosts: destinationPosts
+  }
+
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, feed, "feed data fetched successfully"));
+})
