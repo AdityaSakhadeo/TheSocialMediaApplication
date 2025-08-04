@@ -145,7 +145,7 @@ export const showFeed = asyncHandler(async (req, res) => {
         path: 'points',
         select: 'name'
       },
-    }).populate("destination")
+    })
     .sort({ createdAt: -1 });
 
   // Get posts made under followed destinations

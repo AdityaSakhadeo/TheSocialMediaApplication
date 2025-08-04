@@ -26,22 +26,26 @@ const postSchema = new Schema(
       type: Number,
       default: 0,
     },
-    likes: {
-      type: Number,
-      default: 0,
+    likes:{
+      type:Number,
+      default:0
     },
-    image: {//
+    likedBy: {
+      type: [String],
+      default:[]
+  },
+    image: {
       type: [String],
     },
-    caption: {//
+    caption: {
       type: String,
       required: true,
     },
-    comments: {
-      type: [String],
-      default: [],
-    },
-    destination: {//
+    comments: [{
+      username:String,
+      comment:String    
+    }],
+    destination: {
       type: Schema.Types.ObjectId,
       ref: "destinations",
       required: true,
